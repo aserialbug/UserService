@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "dgSpecHash": "ZaD3BpD3OvkFwLNeCwX2nTnkt7V5j1xaMhT+bkkb3JHDC9TRVchKz+WUhALJ+pvmQyBrC9LhjHPd3EGhJ+c+8Q==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Anton\\Documents\\Source\\UserService\\UserService.Domain\\UserService.Domain.csproj",
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "NU1803",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "You are running the 'restore' operation with an 'HTTP' source, 'http://nexus.sibintek.ru/repository/nuget-group/'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source."
+    },
+    {
+      "code": "NU1803",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "You are running the 'restore' operation with an 'HTTP' source, 'http://reg.spherelab.local:8081/repository/nuget-group/'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source."
+    }
+  ]
+}

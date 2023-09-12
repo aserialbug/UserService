@@ -1,0 +1,68 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Anton\\Documents\\Source\\UserService\\UserService.Benchmarks\\UserService.Benchmarks.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Anton\\Documents\\Source\\UserService\\UserService.Benchmarks\\UserService.Benchmarks.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Anton\\Documents\\Source\\UserService\\UserService.Benchmarks\\UserService.Benchmarks.csproj",
+        "projectName": "UserService.Benchmarks",
+        "projectPath": "C:\\Users\\Anton\\Documents\\Source\\UserService\\UserService.Benchmarks\\UserService.Benchmarks.csproj",
+        "packagesPath": "C:\\Users\\Anton\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Anton\\Documents\\Source\\UserService\\UserService.Benchmarks\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Anton\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "http://nexus.sibintek.ru/repository/nuget-group/": {},
+          "http://reg.spherelab.local:8081/repository/nuget-group/": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "BenchmarkDotNet": {
+              "target": "Package",
+              "version": "[0.13.7, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.302\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
