@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using UserService.Application.Exceptions;
 using UserService.Application.Interfaces;
 using UserService.Domain.Person;

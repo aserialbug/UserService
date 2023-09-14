@@ -1,4 +1,6 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
 using Konscious.Security.Cryptography;
 using Microsoft.Extensions.Options;
 using UserService.Application.Interfaces;

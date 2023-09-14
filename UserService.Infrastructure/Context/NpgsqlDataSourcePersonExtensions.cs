@@ -1,4 +1,5 @@
-﻿using Npgsql;
+﻿using System.Threading.Tasks;
+using Npgsql;
 using NpgsqlTypes;
 using UserService.Domain.Person;
 using UserService.Domain.User;

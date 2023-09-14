@@ -1,4 +1,5 @@
-﻿using UserService.Application.Exceptions;
+﻿using System.Threading.Tasks;
+using UserService.Application.Exceptions;
 using UserService.Application.Interfaces;
 using UserService.Domain.User;
 using UserService.Infrastructure.Context;

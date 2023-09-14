@@ -1,4 +1,6 @@
-﻿namespace UserService.Infrastructure.Models;
+﻿using System;
+
+namespace UserService.Infrastructure.Models;
 
 public class AppliedMigration
 {

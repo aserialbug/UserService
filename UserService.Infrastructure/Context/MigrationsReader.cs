@@ -1,4 +1,7 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Microsoft.Extensions.Logging;
 using UserService.Infrastructure.Models;
 
