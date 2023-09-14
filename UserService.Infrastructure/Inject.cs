@@ -26,7 +26,9 @@ public static class Inject
         serviceCollection.AddSingleton<PostgreSqlContext>();
         serviceCollection.AddSingleton<JwtSecurityTokenHandler>();
         serviceCollection.AddSingleton<IDataQueryService, DataQueryService>();
-        serviceCollection.AddTransient<Migrations>();
+        serviceCollection.AddTransient<MigrationsService>();
+        serviceCollection.Configure<MigrationsService.MigrationsServiceSettings>(
+            configuration.GetSection(MigrationsService.MigrationsServiceSettings.SectionName));
         serviceCollection.AddTransient<MigrationsReader>();
         serviceCollection.AddNpgsqlDataSource(configuration.GetConnectionString("PostgreSqlContext"), dataSourceLifetime: ServiceLifetime.Singleton);
         return serviceCollection;

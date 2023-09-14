@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Net.Sockets;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Npgsql;
 using NpgsqlTypes;
+using UserService.Infrastructure.Context;
 using UserService.Infrastructure.Models;
 
-namespace UserService.Infrastructure.Context;
+namespace UserService.Infrastructure.Services;
 
-public class Migrations
+public class MigrationsService
 {
     private const string FindDatabaseByNameQuery = "select datname from pg_database where datname = @database";
     private const string CreateDatabaseCommand = "create database \"{0}\" owner {1}";
@@ -21,17 +20,60 @@ public class Migrations
     
     private const string SystemDatabaseName = "postgres";
     private readonly IConfiguration _configuration;
-    private readonly ILogger<Migrations> _logger;
+    private readonly ILogger<MigrationsService> _logger;
     private readonly MigrationsReader _migrationsReader;
+    private readonly MigrationsServiceSettings _settings;
 
-    public Migrations(IConfiguration configuration, ILogger<Migrations> logger, MigrationsReader migrationsReader)
+    public MigrationsService(IConfiguration configuration,
+        ILogger<MigrationsService> logger,
+        MigrationsReader migrationsReader,
+        IOptions<MigrationsServiceSettings> settings)
     {
         _configuration = configuration;
         _logger = logger;
         _migrationsReader = migrationsReader;
+        _settings = settings.Value;
     }
 
     public async Task Apply()
+    {
+        int currentAttempt = 1;
+        bool shouldRetry = true;
+        while (currentAttempt <= _settings.MigrationRetriesCount && shouldRetry)
+        {
+            try
+            {
+
+                _logger.LogInformation("Apply migrations attempt {Number}", currentAttempt);
+                await ApplyMigrations();
+                
+                // Миграции применились, повторять не нужно
+                shouldRetry = false;
+            }
+            catch (NpgsqlException npgsqlException)
+            {
+                if (npgsqlException.InnerException is SocketException)
+                {
+                    // Если мы и в последний раз не применили миграцию, то пробрасываем
+                    // исключение дальше
+                    if (currentAttempt >= _settings.MigrationRetriesCount)
+                        throw;
+                    
+                    _logger.LogError(npgsqlException, "Error applying migration, will retry in {Time} seconds", _settings.MigrationRetryIntervalSec);
+                    await Task.Delay(_settings.MigrationRetryIntervalSec * 1000);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            currentAttempt++;
+            // Остальные ошибки не обрабатывем т.к. при них пробовать еще раз нет смысла
+        }
+    }
+
+    private async Task ApplyMigrations()
     {
         var connectionString = ConnectionString.Parse(
             _configuration.GetConnectionString("PostgreSqlContext"));
@@ -132,5 +174,13 @@ public class Migrations
                                    "it might be already created, trying to continue...", e.Message);
             }
         }
+    }
+    
+    public record MigrationsServiceSettings
+    {
+        public const string SectionName = "MigrationsService";
+
+        public int MigrationRetriesCount { get; init; }
+        public int MigrationRetryIntervalSec { get; init; }
     }
 }

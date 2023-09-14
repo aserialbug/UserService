@@ -7,6 +7,7 @@ using UserService.Application;
 using UserService.Filters;
 using UserService.Infrastructure;
 using UserService.Infrastructure.Context;
+using UserService.Infrastructure.Services;
 using UserService.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +27,7 @@ var app = builder.Build();
 app.Logger.LogInformation("Applying database migrations...");
 try
 {
-    var migrations = app.Services.GetRequiredService<Migrations>();
+    var migrations = app.Services.GetRequiredService<MigrationsService>();
     await migrations.Apply();
 }
 catch (Exception e)
