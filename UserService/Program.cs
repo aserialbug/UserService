@@ -1,3 +1,8 @@
+using System;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using UserService.Application;
 using UserService.Filters;
 using UserService.Infrastructure;
