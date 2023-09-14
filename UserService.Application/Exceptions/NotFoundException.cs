@@ -1,4 +1,6 @@
-﻿namespace UserService.Application.Exceptions;
+﻿using System;
+
+namespace UserService.Application.Exceptions;
 
 public class NotFoundException : Exception
 {

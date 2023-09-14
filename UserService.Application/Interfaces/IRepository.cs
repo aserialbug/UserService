@@ -1,4 +1,5 @@
-﻿using UserService.Domain.Base;
+﻿using System.Threading.Tasks;
+using UserService.Domain.Base;
 
 namespace UserService.Application.Interfaces;
 

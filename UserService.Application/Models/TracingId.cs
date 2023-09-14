@@ -1,4 +1,6 @@
-﻿namespace UserService.Application.Models;
+﻿using System;
+
+namespace UserService.Application.Models;
 
 public sealed class TracingId : IEquatable<TracingId>
 {
