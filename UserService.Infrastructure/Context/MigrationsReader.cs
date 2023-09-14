@@ -26,7 +26,7 @@ public class MigrationsReader
         try
         {
             var fullPath = Path.Combine(Directory.GetCurrentDirectory(), MigrationsFile);
-            using var migrationsFile = new FileStream(fullPath, FileMode.Open);
+            using var migrationsFile = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
             var result = serializer.Deserialize(migrationsFile);
             if (result != null)
                 migrationDefinitions = (MigrationDefinition[])result;
