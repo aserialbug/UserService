@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfMigrationDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <MigrationDefinition>
+        <Order>0</Order>
+        <Description>Initial tables creation</Description>
+        <Body>CREATE TABLE users (
+            id          text primary key,
+            login       text,
+            password    text
+            );
+
+            create table persons (
+            id          text primary key,
+            first_name  text,
+            last_name   text,
+            age         int,
+            birthday    date,
+            biography   text,
+            city        text
+            );
+        </Body>
+    </MigrationDefinition>
+</ArrayOfMigrationDefinition>

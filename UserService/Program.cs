@@ -1,6 +1,7 @@
 using UserService.Application;
 using UserService.Filters;
 using UserService.Infrastructure;
+using UserService.Infrastructure.Context;
 using UserService.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,20 @@ builder.Logging.AddConsole();
 
 
 var app = builder.Build();
+app.Logger.LogInformation("Applying database migrations...");
+try
+{
+    var migrations = app.Services.GetRequiredService<Migrations>();
+    await migrations.Apply();
+}
+catch (Exception e)
+{
+    app.Logger.LogCritical(e,"Database migrations error: {Message}, exiting", e.Message);
+    return;
+}
+
+app.Logger.LogInformation("Migrations applied successfully");
+
 
 // Configure the HTTP request pipeline.
 app.UseMiddleware<RequestLoggingMiddleware>();

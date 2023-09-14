@@ -1,6 +1,7 @@
 ﻿using System.Net.Sockets;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Npgsql;
 using UserService.Application.Exceptions;
 
 namespace UserService.Filters;
@@ -26,7 +27,7 @@ public class ErrorHandlingFilter : IAsyncActionFilter
                 };
                 executed.ExceptionHandled = true;
                 break;
-            case SocketException:
+            case SocketException or PostgresException:
                 executed.Result = new ObjectResult(executed.Exception.Message)
                 {
                     StatusCode = StatusCodes.Status503ServiceUnavailable

@@ -1,9 +1,8 @@
-﻿using Microsoft.Extensions.Options;
-using Npgsql;
+﻿using Npgsql;
 
 namespace UserService.Infrastructure.Context;
 
-internal class PostgreSqlContext : IAsyncDisposable
+internal class PostgreSqlContext
 {
     private readonly NpgsqlDataSource _dataSource;
     public NpgsqlDataSource DataSource => _dataSource;
@@ -11,16 +10,5 @@ internal class PostgreSqlContext : IAsyncDisposable
     public PostgreSqlContext(NpgsqlDataSource dataSource)
     {
         _dataSource = dataSource;
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await _dataSource.DisposeAsync();
-    }
-    
-    public record PostgreSqlContextSettings
-    {
-        public const string SectionName = "PostgreSqlContext";
-        public string ConnectionString { get; init; }
     }
 }

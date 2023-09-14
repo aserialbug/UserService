@@ -24,10 +24,10 @@ public static class Inject
         serviceCollection.Configure<PepperService.PepperServiceSettings>(
             configuration.GetSection(PepperService.PepperServiceSettings.SectionName));
         serviceCollection.AddSingleton<PostgreSqlContext>();
-        serviceCollection.Configure<PostgreSqlContext.PostgreSqlContextSettings>(
-            configuration.GetSection(PostgreSqlContext.PostgreSqlContextSettings.SectionName));
         serviceCollection.AddSingleton<JwtSecurityTokenHandler>();
         serviceCollection.AddSingleton<IDataQueryService, DataQueryService>();
+        serviceCollection.AddTransient<Migrations>();
+        serviceCollection.AddTransient<MigrationsReader>();
         serviceCollection.AddNpgsqlDataSource(configuration.GetConnectionString("PostgreSqlContext"), dataSourceLifetime: ServiceLifetime.Singleton);
         return serviceCollection;
     }
