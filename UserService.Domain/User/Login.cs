@@ -1,4 +1,6 @@
-﻿using UserService.Domain.Base;
+﻿using System;
+using System.Collections.Generic;
+using UserService.Domain.Base;
 
 namespace UserService.Domain.User;
 

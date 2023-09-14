@@ -1,4 +1,7 @@
-﻿namespace UserService.Domain.Base;
+﻿using System;
+using System.Linq;
+
+namespace UserService.Domain.Base;
 
 public abstract class BaseString : IEquatable<BaseString>
 {

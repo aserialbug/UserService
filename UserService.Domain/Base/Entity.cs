@@ -1,4 +1,6 @@
-﻿namespace UserService.Domain.Base;
+﻿using System;
+
+namespace UserService.Domain.Base;
 
 public class Entity<TId> where TId : BaseId
 {

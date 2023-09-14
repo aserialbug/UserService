@@ -1,4 +1,7 @@
-﻿namespace UserService.Domain.Base;
+﻿using System;
+using System.Collections.Generic;
+
+namespace UserService.Domain.Base;
 
 public abstract class BaseId : ValueObject
 {
