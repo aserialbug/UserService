@@ -1,25 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MassTransit;
 
-namespace UserService.Domain.Base;
+namespace UserService.Domain.Common;
 
 public abstract class BaseId : ValueObject
 {
-    private readonly string _id;
+    // NewId это тип сортируемых уникальных идентификатороу
+    private readonly NewId _id;
 
-    protected BaseId(string id)
+    protected BaseId(NewId id)
     {
-        if(string.IsNullOrWhiteSpace(id))
+        if(id == NewId.Empty)
             throw new ArgumentNullException(nameof(id));
         
         _id = id;
     }
 
+    protected abstract string GetIdPrefix();  
+
     public override string ToString()
-        => _id;
+        => $"{GetIdPrefix()}_{_id:N}";
+
+    public Guid ToGuid()
+        => _id.ToGuid();
 
     protected override IEnumerable<object?> GetEqualityComponents()
     {
+        yield return GetIdPrefix();
         yield return _id;
     }
 

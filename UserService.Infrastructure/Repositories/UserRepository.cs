@@ -22,17 +22,22 @@ internal class UserRepository : IUserRepository
 
     private async Task<User> GetById(UserId id)
     {
-        return await _context.DataSource.FindUserById(id, _pepperService)
-            ?? throw new NotFoundException($"User with id={id} was not found");
+        var entity = await _context.DataSource.FindUserById(id, _pepperService)
+                     ?? throw new NotFoundException($"User with id={id} was not found");
+        _context.RegisterClean(entity);
+        return entity;
     }
 
     public async Task Add(User entity)
     {
+        _context.RegisterNew(entity);
+        _context.RegisterEvent(UserRegisteredDomainEvent.New(entity.Id));
         await _context.DataSource.AddUser(entity, _pepperService);
     }
 
     public async Task Remove(User entity)
     {
+        _context.RegisterDeleted(entity);
         await _context.DataSource.RemoveUser(entity.Id);
     }
 }

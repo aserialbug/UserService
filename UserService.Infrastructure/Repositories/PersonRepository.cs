@@ -21,17 +21,22 @@ internal class PersonRepository : IPersonRepository
 
     public async Task<Person> GetById(UserId userId)
     {
-        return await _context.DataSource.FindPersonById(userId)
+        var entity = await _context.DataSource.FindPersonById(userId)
             ?? throw new NotFoundException($"Person with id={userId} was not found");
+        
+        _context.RegisterNew(entity);
+        return entity;
     }
 
     public async Task Add(Person entity)
     {
+        _context.RegisterNew(entity);
         await _context.DataSource.AddPerson(entity);
     }
 
     public async Task Remove(Person entity)
     {
+        _context.RegisterDeleted(entity);
         await _context.DataSource.RemovePerson(entity.Id);
     }
 }

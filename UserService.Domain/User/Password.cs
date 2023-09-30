@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using UserService.Domain.Base;
+using UserService.Domain.Common;
 
 namespace UserService.Domain.User;
 
