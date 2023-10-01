@@ -2,11 +2,10 @@
 
 public class RequestContext
 {
-    public TracingId TracingId { get; }
-
-
     public RequestContext()
     {
         TracingId = TracingId.New();
     }
+
+    public TracingId TracingId { get; }
 }

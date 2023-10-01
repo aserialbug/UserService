@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace UserService.Application.Models;
+﻿namespace UserService.Application.Models;
 
 public record RegisterCommand
 {

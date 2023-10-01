@@ -1,5 +1,4 @@
-﻿using System;
-using UserService.Domain.Base;
+﻿using UserService.Domain.Common;
 
 namespace UserService.Domain.User;
 

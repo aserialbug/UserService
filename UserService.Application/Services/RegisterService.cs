@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using UserService.Application.Interfaces;
+﻿using UserService.Application.Interfaces;
 using UserService.Application.Models;
 using UserService.Domain.Person;
 using UserService.Domain.User;
@@ -8,11 +7,12 @@ namespace UserService.Application.Services;
 
 public class RegisterService
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IPersonRepository _personRepository;
     private readonly IHashingService _encryptionService;
+    private readonly IPersonRepository _personRepository;
+    private readonly IUserRepository _userRepository;
 
-    public RegisterService(IUserRepository userRepository, IPersonRepository personRepository, IHashingService encryptionService)
+    public RegisterService(IUserRepository userRepository, IPersonRepository personRepository,
+        IHashingService encryptionService)
     {
         _userRepository = userRepository;
         _personRepository = personRepository;
@@ -37,8 +37,8 @@ public class RegisterService
             registerCommand.City);
 
         await Task.WhenAll(
-                _userRepository.Add(user),
-                _personRepository.Add(person));
+            _userRepository.Add(user),
+            _personRepository.Add(person));
 
         return userId;
     }
