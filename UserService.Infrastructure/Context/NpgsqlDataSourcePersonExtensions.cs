@@ -25,7 +25,7 @@ internal static class NpgsqlDataSourcePersonExtensions
     public static async Task AddPerson(this NpgsqlDataSource dataSource, Person person)
     {
         await using var addUserCommand = dataSource.CreateCommand(AddUserCommandSql);
-        addUserCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Text, person.Id.ToString());
+        addUserCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Uuid, person.Id.ToGuid());
         addUserCommand.Parameters.AddWithValue("first_name", NpgsqlDbType.Text, person.FirstName);
         addUserCommand.Parameters.AddWithValue("last_name", NpgsqlDbType.Text, person.LastName);
         addUserCommand.Parameters.AddWithValue("age", NpgsqlDbType.Integer, person.Age);
@@ -38,12 +38,12 @@ internal static class NpgsqlDataSourcePersonExtensions
     public static async Task<Person?> FindPersonById(this NpgsqlDataSource dataSource, UserId userId)
     {
         await using var findPersonByIdCommand = dataSource.CreateCommand(FindPersonByIdSql);
-        findPersonByIdCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Text, userId.ToString());
+        findPersonByIdCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Uuid, userId.ToGuid());
         await using var reader = await findPersonByIdCommand.ExecuteReaderAsync();
         if (!await reader.ReadAsync())
             return null;
 
-        var id = UserId.Parse(reader.GetString(0));
+        var id = UserId.FromGuid(reader.GetGuid(0));
         var firstName = reader.GetString(1);
         var lastName = reader.GetString(2);
         var age = reader.GetInt32(3);
@@ -57,7 +57,7 @@ internal static class NpgsqlDataSourcePersonExtensions
     public static async Task RemovePerson(this NpgsqlDataSource dataSource, UserId userId)
     {
         await using var deletePersonCommand = dataSource.CreateCommand(DeletePersonSql);
-        deletePersonCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Text, userId.ToString());
+        deletePersonCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Uuid, userId.ToGuid());
         await deletePersonCommand.ExecuteNonQueryAsync();
     }
     

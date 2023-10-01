@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace UserService.Domain.Base;
+﻿namespace UserService.Domain.Common;
 
 public abstract class BaseString : IEquatable<BaseString>
 {
@@ -10,14 +7,8 @@ public abstract class BaseString : IEquatable<BaseString>
     protected BaseString(byte[] bytes)
     {
         _bytes = bytes
-            ?? throw new ArgumentNullException(nameof(bytes));
+                 ?? throw new ArgumentNullException(nameof(bytes));
     }
-    
-    public ReadOnlySpan<byte> GetBytes()
-        => new (_bytes);
-    
-    public override string ToString()
-        => Convert.ToBase64String(_bytes);
 
     public bool Equals(BaseString? other)
     {
@@ -26,11 +17,21 @@ public abstract class BaseString : IEquatable<BaseString>
         return _bytes.SequenceEqual(other._bytes);
     }
 
+    public ReadOnlySpan<byte> GetBytes()
+    {
+        return new(_bytes);
+    }
+
+    public override string ToString()
+    {
+        return Convert.ToBase64String(_bytes);
+    }
+
     public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((BaseString)obj);
     }
 

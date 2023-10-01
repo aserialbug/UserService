@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using UserService.Application.Models;
+﻿using UserService.Application.Models;
 using UserService.Domain.User;
 
 namespace UserService.Application.Interfaces;

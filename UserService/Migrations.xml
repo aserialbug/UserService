@@ -4,13 +4,13 @@
         <Order>0</Order>
         <Description>Initial tables creation</Description>
         <Body>CREATE TABLE users (
-            id          text primary key,
+            id          uuid primary key,
             login       text,
             password    text
             );
 
             create table persons (
-            id          text primary key,
+            id          uuid primary key,
             first_name  text,
             last_name   text,
             age         int,
