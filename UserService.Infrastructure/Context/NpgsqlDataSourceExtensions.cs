@@ -9,7 +9,6 @@ namespace UserService.Infrastructure.Context;
 internal static class NpgsqlDataSourceUserExtensions
 {
     private const string AddUserSql = "insert into users (id, login, password) values (@userId, @login, @password)";
-
     private const string FindUserByIdSql = "select id, login, password from users where id = @userId";
     private const string RemoveUserSql = "delete from users where id = @userId";
     
