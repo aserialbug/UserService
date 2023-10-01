@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
+using UserService.Application.Models;
 using UserService.Domain.Person;
 using UserService.Domain.User;
 
@@ -45,5 +46,28 @@ internal static class NpgsqlDataSourcePersonExtensions
         await using var deleteCommand = dataSource.CreateCommand("delete from persons where id = @userId");
         deleteCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Text, userId.ToString());
         await deleteCommand.ExecuteNonQueryAsync();
+    }
+    
+    public static async Task<UserViewModel[]> SearchByName(this NpgsqlDataSource dataSource, string firstNameQuery, string lastNameQuery)
+    {
+        await using var searchByNameCommand = dataSource.CreateCommand("select first_name, last_name, age, birthday, biography, city from persons where first_name like @first and last_name like @last order by id");
+        searchByNameCommand.Parameters.AddWithValue("first", NpgsqlDbType.Text, firstNameQuery);
+        searchByNameCommand.Parameters.AddWithValue("last", NpgsqlDbType.Text, lastNameQuery);
+        await using var reader = await searchByNameCommand.ExecuteReaderAsync();
+        var result = new List<UserViewModel>();
+        while (await reader.ReadAsync())
+        {
+            result.Add(new UserViewModel
+            {
+                First_name = reader.GetString(0),
+                Second_name = reader.GetString(1),
+                Age = reader.GetInt32(2),
+                Birthdate = reader.GetDateTime(3),
+                Biography = reader.GetString(4),
+                City = reader.GetString(5)
+            });
+        }
+
+        return result.ToArray();
     }
 }
