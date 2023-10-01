@@ -9,9 +9,22 @@ namespace UserService.Infrastructure.Context;
 
 internal static class NpgsqlDataSourcePersonExtensions
 {
+    private const string AddUserCommandSql =
+        "insert into persons (id, first_name, last_name, age, birthday, biography, city) values " +
+        "(@userId, @first_name, @last_name, @age, @birthday, @biography, @city)";
+
+    private const string FindPersonByIdSql =
+        "select id, first_name, last_name, age, birthday, biography, city from persons where id = @userId";
+
+    private const string DeletePersonSql = "delete from persons where id = @userId";
+
+    private const string SearchByNameSql =
+        "select first_name, last_name, age, birthday, biography, city from persons " +
+        "where first_name like @first and last_name like @last order by id";
+    
     public static async Task AddPerson(this NpgsqlDataSource dataSource, Person person)
     {
-        await using var addUserCommand = dataSource.CreateCommand("insert into persons (id, first_name, last_name, age, birthday, biography, city) values (@userId, @first_name, @last_name, @age, @birthday, @biography, @city)");
+        await using var addUserCommand = dataSource.CreateCommand(AddUserCommandSql);
         addUserCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Text, person.Id.ToString());
         addUserCommand.Parameters.AddWithValue("first_name", NpgsqlDbType.Text, person.FirstName);
         addUserCommand.Parameters.AddWithValue("last_name", NpgsqlDbType.Text, person.LastName);
@@ -24,9 +37,9 @@ internal static class NpgsqlDataSourcePersonExtensions
     
     public static async Task<Person?> FindPersonById(this NpgsqlDataSource dataSource, UserId userId)
     {
-        await using var getByIdCommand = dataSource.CreateCommand("select id, first_name, last_name, age, birthday, biography, city from persons where id = @userId");
-        getByIdCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Text, userId.ToString());
-        await using var reader = await getByIdCommand.ExecuteReaderAsync();
+        await using var findPersonByIdCommand = dataSource.CreateCommand(FindPersonByIdSql);
+        findPersonByIdCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Text, userId.ToString());
+        await using var reader = await findPersonByIdCommand.ExecuteReaderAsync();
         if (!await reader.ReadAsync())
             return null;
 
@@ -43,14 +56,14 @@ internal static class NpgsqlDataSourcePersonExtensions
     
     public static async Task RemovePerson(this NpgsqlDataSource dataSource, UserId userId)
     {
-        await using var deleteCommand = dataSource.CreateCommand("delete from persons where id = @userId");
-        deleteCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Text, userId.ToString());
-        await deleteCommand.ExecuteNonQueryAsync();
+        await using var deletePersonCommand = dataSource.CreateCommand(DeletePersonSql);
+        deletePersonCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Text, userId.ToString());
+        await deletePersonCommand.ExecuteNonQueryAsync();
     }
     
     public static async Task<UserViewModel[]> SearchByName(this NpgsqlDataSource dataSource, string firstNameQuery, string lastNameQuery)
     {
-        await using var searchByNameCommand = dataSource.CreateCommand("select first_name, last_name, age, birthday, biography, city from persons where first_name like @first and last_name like @last order by id");
+        await using var searchByNameCommand = dataSource.CreateCommand(SearchByNameSql);
         searchByNameCommand.Parameters.AddWithValue("first", NpgsqlDbType.Text, firstNameQuery);
         searchByNameCommand.Parameters.AddWithValue("last", NpgsqlDbType.Text, lastNameQuery);
         await using var reader = await searchByNameCommand.ExecuteReaderAsync();
