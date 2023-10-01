@@ -20,7 +20,7 @@ internal static class NpgsqlDataSourcePersonExtensions
 
     private const string SearchByNameSql =
         "select first_name, last_name, age, birthday, biography, city from persons " +
-        "where first_name like @first and last_name like @last order by id";
+        "where first_name like @first || '%' and last_name like @last || '%' order by id";
     
     public static async Task AddPerson(this NpgsqlDataSource dataSource, Person person)
     {
