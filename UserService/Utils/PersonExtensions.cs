@@ -11,7 +11,6 @@ public static class PersonExtensions
         {
             First_name = user.FirstName,
             Second_name = user.LastName,
-            Age = user.Age,
             Birthdate = user.Birthday,
             Biography = user.Biography,
             City = user.City
