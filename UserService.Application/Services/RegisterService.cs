@@ -31,7 +31,6 @@ public class RegisterService
             userId,
             registerCommand.First_name,
             registerCommand.Second_name,
-            registerCommand.Age,
             registerCommand.Birthdate,
             registerCommand.Biography,
             registerCommand.City);
@@ -41,5 +40,19 @@ public class RegisterService
             _personRepository.Add(person));
 
         return userId;
+    }
+
+    public async Task BatchRegister(IAsyncEnumerable<RegisterCommand> commands)
+    {
+        await Parallel.ForEachAsync(
+            commands, 
+            new ParallelOptions
+            {
+                MaxDegreeOfParallelism = 8
+                
+            }, async (command, token) =>
+            {
+                _ = await Register(command);
+            });
     }
 }

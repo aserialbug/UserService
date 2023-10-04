@@ -34,6 +34,17 @@ public class UserController
         var userId = await _registerService.Register(command);
         return new RegisterResponse { User_id = userId.ToString() };
     }
+    
+    [HttpPost("register/batch")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task BatchRegister(IFormFile formFile)
+    {
+        var commands = formFile.ReadUsers();
+        await _registerService.BatchRegister(commands);
+    }
 
     [HttpGet("get/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
