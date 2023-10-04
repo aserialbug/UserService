@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Globalization;
+using System.Runtime.CompilerServices;
 using UserService.Application.Models;
 
 namespace UserService.Utils;
@@ -25,7 +26,7 @@ public static class IFormFileExtensions
         {
             Second_name = sectors[0],
             First_name = sectors[1],
-            Birthdate = DateTime.Parse(sectors[2]),
+            Birthdate = DateTime.ParseExact(sectors[2].AsSpan(), "dd.MM.yyyy", CultureInfo.InvariantCulture),
             City = sectors[3],
             Biography = sectors[4],
             Password = sectors[5]
