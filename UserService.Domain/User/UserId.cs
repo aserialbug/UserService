@@ -23,9 +23,6 @@ public class UserId : BaseId
         var id = new NewId(idTmp[1]);
         
         return new UserId(id);
-        var id = new NewId(idTmp[1]);
-        
-        return new UserId(id);
     }
     
     public static UserId FromGuid(Guid value)
