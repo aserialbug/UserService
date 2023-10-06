@@ -11,9 +11,23 @@ namespace UserService.Filters;
 
 public class ErrorHandlingFilter : IAsyncActionFilter
 {
+    private readonly ILogger _logger;
+
+    public ErrorHandlingFilter(ILoggerFactory loggerFactory)
+    {
+        _logger = loggerFactory.CreateLogger<ErrorHandlingFilter>();
+    }
+    
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var executed = await next();
+        if (executed.Exception == null)
+        {
+            return;
+        }
+        
+        _logger.LogError(executed.Exception, "Error occurred: {Message}", executed.Exception.Message);
+        
         switch (executed.Exception)
         {
             case ArgumentException:

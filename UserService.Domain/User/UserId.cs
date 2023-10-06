@@ -1,4 +1,4 @@
-﻿using System;
+using MassTransit;
 using MassTransit;
 using UserService.Domain.Common;
 
@@ -23,8 +23,18 @@ public class UserId : BaseId
         var id = new NewId(idTmp[1]);
         
         return new UserId(id);
+        var id = new NewId(idTmp[1]);
+        
+        return new UserId(id);
+    }
+    
+    public static UserId FromGuid(Guid value)
+    {
+        return new(NewId.FromGuid(value));
     }
 
     protected override string GetIdPrefix()
-        => nameof(UserId);
+    {
+        return nameof(UserId);
+    }
 }

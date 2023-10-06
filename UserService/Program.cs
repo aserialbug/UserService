@@ -1,5 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -20,6 +21,8 @@ builder.Services.AddControllers(options => options.Filters.Add<ErrorHandlingFilt
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<RequestLoggingMiddleware>();
+builder.Services.Configure<KestrelServerOptions>(
+    builder.Configuration.GetSection("Kestrel"));
 builder.Logging.AddConsole();
 
 

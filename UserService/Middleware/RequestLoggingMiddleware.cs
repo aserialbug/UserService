@@ -29,18 +29,10 @@ public class RequestLoggingMiddleware : IMiddleware
         {
             await next(context);
         }
-        catch (Exception e)
-        {
-            _logger.LogError(e,"Error handling {Method} {Url}: {Message}; trace={Tracing}", 
-                context.Request.Method, 
-                context.Request.Path.Value,
-                e.Message,
-                _context.TracingId);
-        }
         finally
         {
             stopwatch.Stop();
-            _logger.LogInformation("Successfully handled {Method} {Url} => {Status} in {Time} ms; trace={Tracing}", 
+            _logger.LogInformation("Done with {Method} {Url} => {Status} in {Time} ms; trace={Tracing}", 
                 context.Request.Method, 
                 context.Request.Path.Value, 
                 context.Response.StatusCode,

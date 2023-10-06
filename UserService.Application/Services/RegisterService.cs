@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using UserService.Application.Interfaces;
+﻿using UserService.Application.Interfaces;
 using UserService.Application.Models;
 using UserService.Domain.Person;
 using UserService.Domain.User;
@@ -8,11 +7,12 @@ namespace UserService.Application.Services;
 
 public class RegisterService
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IPersonRepository _personRepository;
     private readonly IHashingService _encryptionService;
+    private readonly IPersonRepository _personRepository;
+    private readonly IUserRepository _userRepository;
 
-    public RegisterService(IUserRepository userRepository, IPersonRepository personRepository, IHashingService encryptionService)
+    public RegisterService(IUserRepository userRepository, IPersonRepository personRepository,
+        IHashingService encryptionService)
     {
         _userRepository = userRepository;
         _personRepository = personRepository;
@@ -31,15 +31,28 @@ public class RegisterService
             userId,
             registerCommand.First_name,
             registerCommand.Second_name,
-            registerCommand.Age,
             registerCommand.Birthdate,
             registerCommand.Biography,
             registerCommand.City);
 
         await Task.WhenAll(
-                _userRepository.Add(user),
-                _personRepository.Add(person));
+            _userRepository.Add(user),
+            _personRepository.Add(person));
 
         return userId;
+    }
+
+    public async Task BatchRegister(IAsyncEnumerable<RegisterCommand> commands)
+    {
+        await Parallel.ForEachAsync(
+            commands, 
+            new ParallelOptions
+            {
+                MaxDegreeOfParallelism = 8
+                
+            }, async (command, token) =>
+            {
+                _ = await Register(command);
+            });
     }
 }

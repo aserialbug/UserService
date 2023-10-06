@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
@@ -12,7 +10,7 @@ public static class EncryptionKeyHelper
     private const string RsaPublicKeyFooter = "-----END RSA PUBLIC KEY-----";
     private const string RsaPrivateKeyHeader = "-----BEGIN RSA PRIVATE KEY-----";
     private const string RsaPrivateKeyFooter = "-----END RSA PRIVATE KEY-----";
-    
+
     public static RsaSecurityKey ReadPublicKey(string keyFileName)
     {
         var rsa = RSA.Create();
@@ -20,7 +18,7 @@ public static class EncryptionKeyHelper
         rsa.ImportRSAPublicKey(key, out _);
         return new RsaSecurityKey(rsa);
     }
-    
+
     public static RsaSecurityKey ReadPrivateKey(string keyFileName)
     {
         var rsa = RSA.Create();

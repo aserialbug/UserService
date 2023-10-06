@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UserService.Domain.Common;
+﻿using UserService.Domain.Common;
 
 namespace UserService.Domain.User;
 
@@ -15,7 +13,7 @@ public class Login : ValueObject
 
     public static Login Parse(string? value)
     {
-        if(string.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentNullException(nameof(value));
 
         if (value.Length < 4)

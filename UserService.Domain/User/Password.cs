@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using UserService.Domain.Common;
+﻿using UserService.Domain.Common;
 
 namespace UserService.Domain.User;
 

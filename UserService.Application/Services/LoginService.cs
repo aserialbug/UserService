@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using UserService.Application.Exceptions;
+﻿using UserService.Application.Exceptions;
 using UserService.Application.Interfaces;
 using UserService.Application.Utils;
 using UserService.Domain.User;
@@ -29,12 +28,12 @@ public class LoginService
         // а если не нашли, то соль для шифрования пароля будет сгенерированна случайным 
         // образом и совпадение хэшей будет очень и очень маловероятным
         var encrypted = await _encryptionService.Encrypt(clearTextPassword, user?.Password.Salt);
-        bool authenticated = false;
+        var authenticated = false;
         if (user == null)
         {
             // Пользователь не найден, но для сохранения общего времени
             // выполнения метода делаем пустое сравнение
-            bool temp = encrypted == StaticRandomPassword.Value;
+            var temp = encrypted == StaticRandomPassword.Value;
         }
         else
         {

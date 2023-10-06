@@ -13,7 +13,6 @@
             id          uuid primary key,
             first_name  text,
             last_name   text,
-            age         int,
             birthday    date,
             biography   text,
             city        text
