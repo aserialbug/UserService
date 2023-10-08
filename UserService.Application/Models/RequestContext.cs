@@ -2,10 +2,13 @@
 
 public class RequestContext
 {
-    public RequestContext()
-    {
-        TracingId = TracingId.New();
-    }
+    public Session? Session { get; private set; }
 
-    public TracingId TracingId { get; }
+    public void SetSession(Session session)
+    {
+        if (Session != null)
+            throw new InvalidOperationException("Session context has already been initialized!");
+
+        Session = session;
+    }
 }

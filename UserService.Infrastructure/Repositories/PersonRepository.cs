@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using UserService.Application.Exceptions;
 using UserService.Application.Interfaces;
+using UserService.Application.Models;
 using UserService.Domain.Person;
 using UserService.Domain.User;
 using UserService.Infrastructure.Context;
@@ -19,12 +20,12 @@ internal class PersonRepository : IPersonRepository
 
     public Task<Person> this[UserId id] => GetById(id);
 
-    public async Task<Person> GetById(UserId userId)
+    private async Task<Person> GetById(UserId userId)
     {
         var entity = await _context.DataSource.FindPersonById(userId)
             ?? throw new NotFoundException($"Person with id={userId} was not found");
         
-        _context.RegisterNew(entity);
+        _context.RegisterClean(entity);
         return entity;
     }
 

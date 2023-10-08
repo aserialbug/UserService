@@ -42,6 +42,7 @@ public class UserController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    [BusinessTransaction]
     public async Task BatchRegister(IFormFile formFile)
     {
         var commands = formFile.ReadUsers();

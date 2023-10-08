@@ -12,6 +12,7 @@ public static class Inject
         serviceCollection.AddSingleton<PersonService>();
         serviceCollection.AddSingleton<RegisterService>();
         serviceCollection.AddScoped<RequestContext>();
+        serviceCollection.AddSingleton<SessionManager>();
         return serviceCollection;
     }
 }
