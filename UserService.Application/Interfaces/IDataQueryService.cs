@@ -6,5 +6,5 @@ namespace UserService.Application.Interfaces;
 public interface IDataQueryService
 {
     Task<User?> FindUser(UserId userId);
-    Task<UserViewModel[]> Search(string firstName, string lastName);
+    Task<PersonViewModel[]> SearchPersons(string firstName, string lastName);
 }

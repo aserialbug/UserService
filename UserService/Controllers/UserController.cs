@@ -52,7 +52,7 @@ public class UserController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<UserViewModel> GetUserById([FromRoute] string id)
+    public async Task<PersonViewModel> GetUserById([FromRoute] string id)
     {
         var userId = UserId.Parse(id);
         var person = await _personService.GetById(userId);
@@ -65,8 +65,8 @@ public class UserController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<UserViewModel[]> Search([FromQuery(Name = "first_name")] string firstName, [FromQuery(Name = "last_name")] string lastName)
+    public async Task<PersonViewModel[]> Search([FromQuery(Name = "first_name")] string firstName, [FromQuery(Name = "last_name")] string lastName)
     {
-        return await _queryService.Search(firstName, lastName);
+        return await _queryService.SearchPersons(firstName, lastName);
     }
 }
