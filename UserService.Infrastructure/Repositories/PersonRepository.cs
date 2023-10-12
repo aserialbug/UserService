@@ -8,30 +8,27 @@ using UserService.Infrastructure.Context;
 
 namespace UserService.Infrastructure.Repositories;
 
-internal class PersonRepository : IPersonRepository
+internal class PersonRepository : BaseRepository, IPersonRepository
 {
-    private readonly PostgreSqlContext _context;
-
-    public PersonRepository(PostgreSqlContext context)
+    public PersonRepository(PostgreSqlContext context) : base(context)
     {
-        _context = context;
     }
 
     public Task<Person> this[UserId id] => GetById(id);
 
     public async Task<Person> GetById(UserId userId)
     {
-        return await _context.DataSource.FindPersonById(userId)
+        return await DataSource.FindPersonById(userId)
             ?? throw new NotFoundException($"Person with id={userId} was not found");
     }
 
     public async Task Add(Person entity)
     {
-        await _context.DataSource.AddPerson(entity);
+        await DataSource.AddPerson(entity);
     }
 
     public async Task Remove(Person entity)
     {
-        await _context.DataSource.RemovePerson(entity.Id);
+        await DataSource.RemovePerson(entity.Id);
     }
 }

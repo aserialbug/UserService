@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Collections.Immutable;
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using UserService.Application.Interfaces;
@@ -30,7 +31,6 @@ public static class Inject
         serviceCollection.Configure<MigrationsService.MigrationsServiceSettings>(
             configuration.GetSection(MigrationsService.MigrationsServiceSettings.SectionName));
         serviceCollection.AddTransient<MigrationsReader>();
-        serviceCollection.AddNpgsqlDataSource(configuration.GetConnectionString("PostgreSqlContext"), dataSourceLifetime: ServiceLifetime.Singleton);
         return serviceCollection;
     }
 }
