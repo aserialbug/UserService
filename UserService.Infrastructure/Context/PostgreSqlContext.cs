@@ -1,14 +1,28 @@
-﻿using Npgsql;
+﻿using Microsoft.Extensions.Configuration;
+using Npgsql;
 
 namespace UserService.Infrastructure.Context;
 
-internal class PostgreSqlContext
+internal sealed class PostgreSqlContext : IAsyncDisposable
 {
-    private readonly NpgsqlDataSource _dataSource;
-    public NpgsqlDataSource DataSource => _dataSource;
+    private readonly NpgsqlMultiHostDataSource _dataSource;
 
-    public PostgreSqlContext(NpgsqlDataSource dataSource)
+    public NpgsqlDataSource Primary { get; }
+    public NpgsqlDataSource Standby { get; }
+
+    public PostgreSqlContext(IConfiguration configuration)
     {
-        _dataSource = dataSource;
+        var connectionString = configuration.GetConnectionString("PostgreSqlContext");
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+        _dataSource = dataSourceBuilder.BuildMultiHost();
+        Primary = _dataSource.WithTargetSession(TargetSessionAttributes.Primary);
+        Standby = _dataSource.WithTargetSession(TargetSessionAttributes.PreferStandby);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await Primary.DisposeAsync();
+        await Standby.DisposeAsync();
+        await _dataSource.DisposeAsync();
     }
 }
