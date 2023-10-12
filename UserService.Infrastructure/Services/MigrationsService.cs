@@ -87,7 +87,9 @@ public class MigrationsService
             return;
         }
         
-        await using var dataSource = NpgsqlDataSource.Create(connectionString.ToString());
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString.ToString());
+        await using var multiHostDataSource = dataSourceBuilder.BuildMultiHost();
+        await using var dataSource = multiHostDataSource.WithTargetSession(TargetSessionAttributes.Primary);
         await using var connection = await dataSource.OpenConnectionAsync();
         await using var transaction = await connection.BeginTransactionAsync();
         await EnsureMigrationLogExists(dataSource);
