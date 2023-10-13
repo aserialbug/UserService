@@ -24,6 +24,11 @@ internal class DataQueryService : IDataQueryService
         return await DataSource.FindUserById(userId, _pepperService);
     }
 
+    public async Task<PersonViewModel?> FindPerson(UserId userId)
+    {
+        return await DataSource.FindPersonById(userId);
+    }
+
     public async Task<PersonViewModel[]> SearchPersons(string firstName, string lastName)
     {
         return await DataSource.SearchByName(firstName, lastName);

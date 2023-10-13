@@ -14,13 +14,7 @@ internal class PersonRepository : BaseRepository, IPersonRepository
     {
     }
 
-    public Task<Person> this[UserId id] => GetById(id);
-
-    public async Task<Person> GetById(UserId userId)
-    {
-        return await DataSource.FindPersonById(userId)
-            ?? throw new NotFoundException($"Person with id={userId} was not found");
-    }
+    public Task<Person> this[UserId id] => DataSource.GetPersonById(id);
 
     public async Task Add(Person entity)
     {
