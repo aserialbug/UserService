@@ -9,7 +9,6 @@ public static class Inject
     public static IServiceCollection AddApplication(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<LoginService>();
-        serviceCollection.AddSingleton<PersonService>();
         serviceCollection.AddSingleton<RegisterService>();
         serviceCollection.AddScoped<RequestContext>();
         return serviceCollection;

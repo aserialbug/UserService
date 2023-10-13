@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using UserService.Application.Exceptions;
 using UserService.Application.Interfaces;
 using UserService.Application.Models;
 using UserService.Application.Services;
@@ -13,13 +14,11 @@ namespace UserService.Controllers;
 [Route("[controller]")]
 public class UserController
 {
-    private readonly PersonService _personService;
     private readonly RegisterService _registerService;
     private readonly IDataQueryService _queryService;
 
-    public UserController(PersonService personService, RegisterService registerService, IDataQueryService queryService)
+    public UserController(RegisterService registerService, IDataQueryService queryService)
     {
-        _personService = personService;
         _registerService = registerService;
         _queryService = queryService;
     }
@@ -52,11 +51,14 @@ public class UserController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<PersonViewModel> GetUserById([FromRoute] string id)
+    public async Task<PersonViewModel> GetPersonById([FromRoute] string id)
     {
         var userId = UserId.Parse(id);
-        var person = await _personService.GetById(userId);
-        return person.ToViewModel();
+        var person = await _queryService.FindPerson(userId);
+        if(person == null)
+            throw new NotFoundException($"Person with id={id} was not found");
+        
+        return person;
     }
     
     [HttpGet("search")]

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
+using UserService.Application.Exceptions;
 using UserService.Application.Models;
 using UserService.Domain.Person;
 using UserService.Domain.User;
@@ -34,13 +35,13 @@ internal static class NpgsqlDataSourcePersonExtensions
         await addUserCommand.ExecuteNonQueryAsync();
     }
     
-    public static async Task<Person?> FindPersonById(this NpgsqlDataSource dataSource, UserId userId)
+    public static async Task<Person> GetPersonById(this NpgsqlDataSource dataSource, UserId userId)
     {
         await using var findPersonByIdCommand = dataSource.CreateCommand(FindPersonByIdSql);
         findPersonByIdCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Uuid, userId.ToGuid());
         await using var reader = await findPersonByIdCommand.ExecuteReaderAsync();
         if (!await reader.ReadAsync())
-            return null;
+            throw new NotFoundException($"Person with id={userId} was not found");
 
         var id = UserId.FromGuid(reader.GetGuid(0));
         var firstName = reader.GetString(1);
@@ -51,7 +52,26 @@ internal static class NpgsqlDataSourcePersonExtensions
 
         return new Person(id, firstName, lastName, birthday, biography, city);
     }
-    
+
+    public static async Task<PersonViewModel?> FindPersonById(this NpgsqlDataSource dataSource, UserId userId)
+    {
+        await using var findPersonByIdCommand = dataSource.CreateCommand(FindPersonByIdSql);
+        findPersonByIdCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Uuid, userId.ToGuid());
+        await using var reader = await findPersonByIdCommand.ExecuteReaderAsync();
+        if (!await reader.ReadAsync())
+            return null;
+
+        return new PersonViewModel
+        {
+            Id = UserId.FromGuid(reader.GetGuid(0)).ToString(),
+            First_name = reader.GetString(1),
+            Second_name = reader.GetString(2),
+            Birthdate = reader.GetDateTime(3),
+            Biography = reader.GetString(4),
+            City = reader.GetString(5)
+        };
+    }
+
     public static async Task RemovePerson(this NpgsqlDataSource dataSource, UserId userId)
     {
         await using var deletePersonCommand = dataSource.CreateCommand(DeletePersonSql);
