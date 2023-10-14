@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using UserService.Application.Exceptions;
 using UserService.Application.Interfaces;
 using UserService.Application.Models;
