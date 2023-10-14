@@ -1,5 +1,4 @@
 ﻿using System.Net.Sockets;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Npgsql;
