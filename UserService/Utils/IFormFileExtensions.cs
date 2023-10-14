@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Runtime.CompilerServices;
 using UserService.Application.Models;
 
 namespace UserService.Utils;
