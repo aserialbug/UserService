@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using UserService.Application;
 using UserService.Filters;
 using UserService.Infrastructure;
-using UserService.Infrastructure.Context;
 using UserService.Infrastructure.Services;
 using UserService.Middleware;
 
