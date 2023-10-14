@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Microsoft.Extensions.Logging;
 using UserService.Application.Models;
 
 namespace UserService.Middleware;
