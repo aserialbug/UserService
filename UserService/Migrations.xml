@@ -19,4 +19,18 @@
             );
         </Body>
     </MigrationDefinition>
+    <MigrationDefinition>
+        <Order>1</Order>
+        <Description>Posts tabe added</Description>
+        <Body>
+            create table posts (
+            id          uuid primary key,
+            author      uuid not null,
+            created     timestamp not null,
+            content    text
+            );
+
+            create index posts_author_btree_idx on posts using btree (author);
+        </Body>
+    </MigrationDefinition>
 </ArrayOfMigrationDefinition>

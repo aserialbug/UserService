@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Reflection.Metadata.Ecma335;
+using System.Threading.Tasks;
 using Npgsql;
 using UserService.Application.Interfaces;
 using UserService.Application.Models;
+using UserService.Domain.Posts;
 using UserService.Domain.User;
 using UserService.Infrastructure.Context;
 
@@ -29,8 +31,23 @@ internal class DataQueryService : IDataQueryService
         return await DataSource.FindPersonById(userId);
     }
 
-    public async Task<PersonViewModel[]> SearchPersons(string firstName, string lastName)
+    public async Task<IEnumerable<PersonViewModel>> SearchPersons(string firstName, string lastName)
     {
         return await DataSource.SearchByName(firstName, lastName);
+    }
+
+    public async Task<IEnumerable<string>> FindFriends(UserId userId)
+    {
+        return await DataSource.FindFriends(userId);
+    }
+
+    public async Task<PostViewModel> FindPost(PostId postId)
+    {
+        return await DataSource.FindPost(postId);
+    }
+
+    public async Task<IEnumerable<PostViewModel>> GetPosts(UserId userId)
+    {
+        return await DataSource.GetUserPosts(userId);
     }
 }
