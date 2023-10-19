@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
+using UserService.Application.Exceptions;
 using UserService.Application.Models;
 using UserService.Domain.Person;
 using UserService.Domain.User;
@@ -19,7 +20,7 @@ internal static class NpgsqlDataSourcePersonExtensions
     private const string DeletePersonSql = "delete from persons where id = @userId";
 
     private const string SearchByNameSql =
-        "select first_name, last_name, birthday, biography, city from persons " +
+        "select id, first_name, last_name, birthday, biography, city from persons " +
         "where lower(first_name) like lower(@first) || '%' and lower(last_name) like lower(@last) || '%' order by id";
     
     public static async Task AddPerson(this NpgsqlDataSource dataSource, Person person)
@@ -34,13 +35,13 @@ internal static class NpgsqlDataSourcePersonExtensions
         await addUserCommand.ExecuteNonQueryAsync();
     }
     
-    public static async Task<Person?> FindPersonById(this NpgsqlDataSource dataSource, UserId userId)
+    public static async Task<Person> GetPersonById(this NpgsqlDataSource dataSource, UserId userId)
     {
         await using var findPersonByIdCommand = dataSource.CreateCommand(FindPersonByIdSql);
         findPersonByIdCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Uuid, userId.ToGuid());
         await using var reader = await findPersonByIdCommand.ExecuteReaderAsync();
         if (!await reader.ReadAsync())
-            return null;
+            throw new NotFoundException($"Person with id={userId} was not found");
 
         var id = UserId.FromGuid(reader.GetGuid(0));
         var firstName = reader.GetString(1);
@@ -51,7 +52,26 @@ internal static class NpgsqlDataSourcePersonExtensions
 
         return new Person(id, firstName, lastName, birthday, biography, city);
     }
-    
+
+    public static async Task<PersonViewModel?> FindPersonById(this NpgsqlDataSource dataSource, UserId userId)
+    {
+        await using var findPersonByIdCommand = dataSource.CreateCommand(FindPersonByIdSql);
+        findPersonByIdCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Uuid, userId.ToGuid());
+        await using var reader = await findPersonByIdCommand.ExecuteReaderAsync();
+        if (!await reader.ReadAsync())
+            return null;
+
+        return new PersonViewModel
+        {
+            Id = UserId.FromGuid(reader.GetGuid(0)).ToString(),
+            First_name = reader.GetString(1),
+            Second_name = reader.GetString(2),
+            Birthdate = reader.GetDateTime(3),
+            Biography = reader.GetString(4),
+            City = reader.GetString(5)
+        };
+    }
+
     public static async Task RemovePerson(this NpgsqlDataSource dataSource, UserId userId)
     {
         await using var deletePersonCommand = dataSource.CreateCommand(DeletePersonSql);
@@ -59,22 +79,23 @@ internal static class NpgsqlDataSourcePersonExtensions
         await deletePersonCommand.ExecuteNonQueryAsync();
     }
     
-    public static async Task<UserViewModel[]> SearchByName(this NpgsqlDataSource dataSource, string firstNameQuery, string lastNameQuery)
+    public static async Task<PersonViewModel[]> SearchByName(this NpgsqlDataSource dataSource, string firstNameQuery, string lastNameQuery)
     {
         await using var searchByNameCommand = dataSource.CreateCommand(SearchByNameSql);
         searchByNameCommand.Parameters.AddWithValue("first", NpgsqlDbType.Text, firstNameQuery);
         searchByNameCommand.Parameters.AddWithValue("last", NpgsqlDbType.Text, lastNameQuery);
         await using var reader = await searchByNameCommand.ExecuteReaderAsync();
-        var result = new List<UserViewModel>();
+        var result = new List<PersonViewModel>();
         while (await reader.ReadAsync())
         {
-            result.Add(new UserViewModel
+            result.Add(new PersonViewModel
             {
-                First_name = reader.GetString(0),
-                Second_name = reader.GetString(1),
-                Birthdate = reader.GetDateTime(2),
-                Biography = reader.GetString(3),
-                City = reader.GetString(4)
+                Id = UserId.FromGuid(reader.GetGuid(0)).ToString(),
+                First_name = reader.GetString(1),
+                Second_name = reader.GetString(2),
+                Birthdate = reader.GetDateTime(3),
+                Biography = reader.GetString(4),
+                City = reader.GetString(5)
             });
         }
 

@@ -4,7 +4,7 @@ using UserService.Domain.Common;
 
 namespace UserService.Domain.User;
 
-public class UserId : BaseId
+public class UserId : SimpleId
 {
     private UserId(NewId id) : base(id)
     {
@@ -18,7 +18,7 @@ public class UserId : BaseId
 
         if (idTmp.Length != 2 ||
             !idTmp[0].Equals(nameof(UserId)))
-            throw new ArgumentException($"Value {value} is invalid UserId");
+            throw new ArgumentException($"Value {value} is invalid {nameof(UserId)}");
         
         var id = new NewId(idTmp[1]);
         
@@ -28,10 +28,5 @@ public class UserId : BaseId
     public static UserId FromGuid(Guid value)
     {
         return new(NewId.FromGuid(value));
-    }
-
-    protected override string GetIdPrefix()
-    {
-        return nameof(UserId);
     }
 }

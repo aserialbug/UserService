@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UserService.Application.Exceptions;
 using UserService.Application.Interfaces;
 using UserService.Application.Models;
 using UserService.Application.Services;
@@ -10,22 +10,21 @@ using UserService.Utils;
 
 namespace UserService.Controllers;
 
+[AllowAnonymous]
 [ApiController]
 [Route("[controller]")]
-public class UserController
+public class UsersController : BaseController
 {
-    private readonly PersonService _personService;
     private readonly RegisterService _registerService;
     private readonly IDataQueryService _queryService;
 
-    public UserController(PersonService personService, RegisterService registerService, IDataQueryService queryService)
+    public UsersController(RegisterService registerService, IDataQueryService queryService)
     {
-        _personService = personService;
         _registerService = registerService;
         _queryService = queryService;
     }
 
-    [HttpPost("register")]
+    [HttpPost]
     [ProducesResponseType(typeof(RegisterResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -37,7 +36,7 @@ public class UserController
         return new RegisterResponse { User_id = userId.ToString() };
     }
     
-    [HttpPost("register/batch")]
+    [HttpPost("batch")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -49,27 +48,31 @@ public class UserController
         await _registerService.BatchRegister(commands);
     }
 
-    [HttpGet("get/{id}")]
+    [HttpGet("{userId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<UserViewModel> GetUserById([FromRoute] string id)
+    public async Task<PersonViewModel> GetPersonById([FromRoute] string userId)
     {
-        var userId = UserId.Parse(id);
-        var person = await _personService.GetById(userId);
-        return person.ToViewModel();
+        var id = UserId.Parse(userId);
+        var person = await _queryService.FindPerson(id);
+        if(person == null)
+            throw new NotFoundException($"Person with id={userId} was not found");
+        
+        return person;
     }
     
-    [HttpGet("search")]
+    [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<UserViewModel[]> Search([FromQuery(Name = "first_name")] string firstName, [FromQuery(Name = "last_name")] string lastName)
+    public async Task<PersonViewModel[]> Search([FromQuery(Name = "first_name")] string firstName, [FromQuery(Name = "last_name")] string lastName)
     {
-        return await _queryService.Search(firstName, lastName);
+        var persons = await _queryService.SearchPersons(firstName, lastName);
+        return persons.ToArray();
     }
 }
