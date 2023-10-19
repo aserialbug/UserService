@@ -4,6 +4,7 @@ using UserService.Application.Exceptions;
 using UserService.Application.Interfaces;
 using UserService.Application.Models;
 using UserService.Application.Services;
+using UserService.Domain.Person;
 using UserService.Domain.User;
 using UserService.Utils;
 
@@ -33,17 +34,6 @@ public class UsersController : BaseController
         var userId = await _registerService.Register(command);
         return new RegisterResponse { User_id = userId.ToString() };
     }
-    
-    [HttpPost("batch")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task BatchRegister(IFormFile formFile)
-    {
-        var commands = formFile.ReadUsers();
-        await _registerService.BatchRegister(commands);
-    }
 
     [HttpGet("{userId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -54,7 +44,8 @@ public class UsersController : BaseController
     public async Task<PersonViewModel> GetPersonById([FromRoute] string userId)
     {
         var id = UserId.Parse(userId);
-        var person = await _queryService.FindPerson(id);
+        var personId = PersonId.FromGuid(id.ToGuid());
+        var person = await _queryService.FindPerson(personId);
         if(person == null)
             throw new NotFoundException($"Person with id={userId} was not found");
         

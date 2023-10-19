@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Npgsql;
 using UserService.Application.Interfaces;
 using UserService.Application.Models;
+using UserService.Domain.Person;
 using UserService.Domain.Posts;
 using UserService.Domain.User;
 using UserService.Infrastructure.Context;
@@ -26,9 +27,9 @@ internal class DataQueryService : IDataQueryService
         return await DataSource.FindUserById(userId, _pepperService);
     }
 
-    public async Task<PersonViewModel?> FindPerson(UserId userId)
+    public async Task<PersonViewModel?> FindPerson(PersonId personId)
     {
-        return await DataSource.FindPersonById(userId);
+        return await DataSource.FindPersonById(personId);
     }
 
     public async Task<IEnumerable<PersonViewModel>> SearchPersons(string firstName, string lastName)

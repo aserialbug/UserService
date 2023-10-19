@@ -15,9 +15,9 @@ internal static class NpgsqlDataSourcePersonExtensions
         "(@userId, @first_name, @last_name, @birthday, @biography, @city)";
 
     private const string FindPersonByIdSql =
-        "select id, first_name, last_name, birthday, biography, city from persons where id = @userId";
+        "select id, first_name, last_name, birthday, biography, city from persons where id = @personId";
 
-    private const string DeletePersonSql = "delete from persons where id = @userId";
+    private const string DeletePersonSql = "delete from persons where id = @personId";
 
     private const string SearchByNameSql =
         "select id, first_name, last_name, birthday, biography, city from persons " +
@@ -35,15 +35,15 @@ internal static class NpgsqlDataSourcePersonExtensions
         await addUserCommand.ExecuteNonQueryAsync();
     }
     
-    public static async Task<Person> GetPersonById(this NpgsqlDataSource dataSource, UserId userId)
+    public static async Task<Person> GetPersonById(this NpgsqlDataSource dataSource, PersonId personId)
     {
         await using var findPersonByIdCommand = dataSource.CreateCommand(FindPersonByIdSql);
-        findPersonByIdCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Uuid, userId.ToGuid());
+        findPersonByIdCommand.Parameters.AddWithValue("personId", NpgsqlDbType.Uuid, personId.ToGuid());
         await using var reader = await findPersonByIdCommand.ExecuteReaderAsync();
         if (!await reader.ReadAsync())
-            throw new NotFoundException($"Person with id={userId} was not found");
+            throw new NotFoundException($"Person with id={personId} was not found");
 
-        var id = UserId.FromGuid(reader.GetGuid(0));
+        var id = PersonId.FromGuid(reader.GetGuid(0));
         var firstName = reader.GetString(1);
         var lastName = reader.GetString(2);
         var birthday = reader.GetDateTime(3);
@@ -53,10 +53,10 @@ internal static class NpgsqlDataSourcePersonExtensions
         return new Person(id, firstName, lastName, birthday, biography, city);
     }
 
-    public static async Task<PersonViewModel?> FindPersonById(this NpgsqlDataSource dataSource, UserId userId)
+    public static async Task<PersonViewModel?> FindPersonById(this NpgsqlDataSource dataSource, PersonId personId)
     {
         await using var findPersonByIdCommand = dataSource.CreateCommand(FindPersonByIdSql);
-        findPersonByIdCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Uuid, userId.ToGuid());
+        findPersonByIdCommand.Parameters.AddWithValue("personId", NpgsqlDbType.Uuid, personId.ToGuid());
         await using var reader = await findPersonByIdCommand.ExecuteReaderAsync();
         if (!await reader.ReadAsync())
             return null;
@@ -72,10 +72,10 @@ internal static class NpgsqlDataSourcePersonExtensions
         };
     }
 
-    public static async Task RemovePerson(this NpgsqlDataSource dataSource, UserId userId)
+    public static async Task RemovePerson(this NpgsqlDataSource dataSource, PersonId personId)
     {
         await using var deletePersonCommand = dataSource.CreateCommand(DeletePersonSql);
-        deletePersonCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Uuid, userId.ToGuid());
+        deletePersonCommand.Parameters.AddWithValue("personId", NpgsqlDbType.Uuid, personId.ToGuid());
         await deletePersonCommand.ExecuteNonQueryAsync();
     }
     

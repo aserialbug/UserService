@@ -3,9 +3,9 @@ using UserService.Domain.User;
 
 namespace UserService.Domain.Person;
 
-public class Person : Entity<UserId>
+public class Person : Entity<PersonId>
 {
-    public Person(UserId id, string firstName, string lastName, DateTime birthday, string biography,
+    public Person(PersonId id, string firstName, string lastName, DateTime birthday, string biography,
         string city) : base(id)
     {
         FirstName = firstName;

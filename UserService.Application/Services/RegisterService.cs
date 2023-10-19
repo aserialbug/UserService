@@ -27,8 +27,9 @@ public class RegisterService
         var password = await _encryptionService.Encrypt(clearPassword);
         var user = new User(userId, login, password);
 
+        var personId = PersonId.FromGuid(userId.ToGuid());
         var person = new Person(
-            userId,
+            personId,
             registerCommand.First_name,
             registerCommand.Second_name,
             registerCommand.Birthdate,
@@ -40,19 +41,5 @@ public class RegisterService
             _personRepository.Add(person));
 
         return userId;
-    }
-
-    public async Task BatchRegister(IAsyncEnumerable<RegisterCommand> commands)
-    {
-        await Parallel.ForEachAsync(
-            commands, 
-            new ParallelOptions
-            {
-                MaxDegreeOfParallelism = 8
-                
-            }, async (command, token) =>
-            {
-                _ = await Register(command);
-            });
     }
 }
