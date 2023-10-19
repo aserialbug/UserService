@@ -14,7 +14,7 @@ internal class PersonRepository : BaseRepository, IPersonRepository
     {
     }
 
-    public Task<Person> this[UserId id] => DataSource.GetPersonById(id);
+    public Task<Person> this[PersonId id] => DataSource.GetPersonById(id);
 
     public async Task Add(Person entity)
     {
