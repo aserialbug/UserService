@@ -1,4 +1,5 @@
-﻿using UserService.Application.Interfaces;
+﻿using UserService.Application.Exceptions;
+using UserService.Application.Interfaces;
 using UserService.Application.Models;
 using UserService.Domain.Posts;
 using UserService.Domain.User;
@@ -23,7 +24,8 @@ public class PostsService
 
     public async Task<PostViewModel> GetPost(PostId postId)
     {
-        return await _dataQueryService.FindPost(postId);
+        var post = await _dataQueryService.FindPost(postId);
+        return post ?? throw new NotFoundException($"Post with id={postId} was not found");
     }
 
     public async Task<PostId> Create(UserId userId, string text)

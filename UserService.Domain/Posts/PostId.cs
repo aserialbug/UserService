@@ -26,4 +26,9 @@ public class PostId : SimpleId
         
         return new PostId(id);
     }
+    
+    public static PostId FromGuid(Guid value)
+    {
+        return new(NewId.FromGuid(value));
+    }
 }

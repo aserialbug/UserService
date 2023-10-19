@@ -41,7 +41,7 @@ internal class DataQueryService : IDataQueryService
         return await DataSource.FindFriends(userId);
     }
 
-    public async Task<PostViewModel> FindPost(PostId postId)
+    public async Task<PostViewModel?> FindPost(PostId postId)
     {
         return await DataSource.FindPost(postId);
     }

@@ -33,4 +33,38 @@
             create index posts_author_btree_idx on posts using btree (author);
         </Body>
     </MigrationDefinition>
+    <MigrationDefinition>
+        <Order>2</Order>
+        <Description>Friendship table and other added</Description>
+        <Body>
+            -- Create table
+            create table friendships (
+            friend_from uuid not null,
+            friend_to uuid not null,
+            created timestamp not null default now()
+            );
+            
+            -- Create indexing function
+            create function smaller_first(uuid, uuid) returns uuid[]
+            immutable
+            language plpgsql
+            as
+            $$
+            BEGIN
+            if $1 > $2 then
+            return array [$2, $1];
+            end if;
+            return array [$1, $2];
+            END
+            $$;
+            
+            -- Create unique index - BTREE
+            create unique index if not exists test_array_btree_idx
+            on friendships using btree (smaller_first(friend_from, friend_to));
+            
+            -- Create search index - GIN
+            create index if not exists test_array_gin_idx
+            on friendships using gin (smaller_first(friend_from, friend_to));
+        </Body>
+    </MigrationDefinition>
 </ArrayOfMigrationDefinition>

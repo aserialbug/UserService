@@ -5,18 +5,18 @@ namespace UserService.Domain.Friends;
 
 public class FriendshipId : BaseId
 {
-    public UserId Left { get; }
-    public UserId Right { get; }
+    public UserId From { get; }
+    public UserId To { get; }
     
-    public FriendshipId(UserId left, UserId right)
+    public FriendshipId(UserId from, UserId to)
     {
-        Left = left ?? throw new ArgumentNullException(nameof(left));
-        Right = right ?? throw new ArgumentNullException(nameof(right));
+        From = from ?? throw new ArgumentNullException(nameof(from));
+        To = to ?? throw new ArgumentNullException(nameof(to));
     }
     
     protected override IEnumerable<object?> GetEqualityComponents()
     {
-        yield return Left;
-        yield return Right;
+        yield return From;
+        yield return To;
     }
 }
