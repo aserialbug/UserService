@@ -2,7 +2,7 @@
 
 namespace UserService.Domain.Common;
 
-public class DomainEventId : BaseId
+public class DomainEventId : SimpleId
 {
     private DomainEventId(NewId id) : base(id)
     {
@@ -22,7 +22,4 @@ public class DomainEventId : BaseId
         
         return new DomainEventId(id);
     }
-
-    protected override string GetIdPrefix()
-        => nameof(DomainEventId);
 }
