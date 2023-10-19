@@ -21,7 +21,7 @@ public static class NpgsqlDataSourceFriendsExtensions
     
     private const string FindFriendsSql = 
         "select friend_from, friend_to from friendships where " +
-        "smaller_first(friend_from, friend_to) && '{ @userId }'";
+        @"smaller_first(friend_from, friend_to) && ARRAY[@userId]";
     
     public static async Task AddFriendship(this NpgsqlDataSource dataSource, Friendship friendship)
     {
