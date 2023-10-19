@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using UserService.Application.Models;
 using UserService.Domain.User;
 
 namespace UserService.Controllers;
 
 [ApiController]
-public class LoginController
+public class LoginController : BaseController
 {
     private readonly Application.Services.LoginService _userService;
 
@@ -20,6 +21,7 @@ public class LoginController
     /// <param name="command"></param>
     /// <returns></returns>
     [HttpPost("/login")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

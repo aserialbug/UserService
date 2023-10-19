@@ -15,6 +15,8 @@ public static class Inject
     {
         serviceCollection.AddSingleton<IPersonRepository, PersonRepository>();
         serviceCollection.AddSingleton<IUserRepository, UserRepository>();
+        serviceCollection.AddSingleton<IFriendshipRepository, FriendshipRepository>();
+        serviceCollection.AddSingleton<IPostRepository, PostRepository>();
         serviceCollection.AddSingleton<ITokenService, TokenService>();
         serviceCollection.Configure<TokenService.TokenGeneratorServiceSettings>(
             configuration.GetSection(TokenService.TokenGeneratorServiceSettings.SectionName));

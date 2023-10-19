@@ -1,19 +1,34 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using UserService.Application;
 using UserService.Filters;
 using UserService.Infrastructure;
 using UserService.Infrastructure.Services;
 using UserService.Middleware;
+using UserService.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddCustomAuthentication(builder.Configuration);
+builder.Services.AddAuthorization();
 builder.Services.AddTransient<ErrorHandlingFilter>();
 builder.Services.AddControllers(options => options.Filters.Add<ErrorHandlingFilter>());
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Standard Authorization header using the Bearer scheme (\"bearer {token}\")",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
+    options.OperationFilter<SecurityRequirementsOperationFilter>("Bearer");
+});
 builder.Services.AddScoped<RequestLoggingMiddleware>();
 builder.Services.Configure<KestrelServerOptions>(
     builder.Configuration.GetSection("Kestrel"));
@@ -45,6 +60,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
