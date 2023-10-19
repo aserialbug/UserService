@@ -11,6 +11,7 @@ public static class Inject
         serviceCollection.AddSingleton<LoginService>();
         serviceCollection.AddSingleton<RegisterService>();
         serviceCollection.AddSingleton<FriendsService>();
+        serviceCollection.AddSingleton<PostsService>();
         serviceCollection.AddScoped<RequestContext>();
         return serviceCollection;
     }

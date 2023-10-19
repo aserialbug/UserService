@@ -57,6 +57,6 @@ public class FriendsController : BaseController
         var id = GetAuthenticatedUser() 
                  ?? throw new UnauthorizedAccessException();
         var friend = UserId.Parse(friendId);
-        await _friendsService.Add(id, friend);
+        await _friendsService.Delete(id, friend);
     }
 }
