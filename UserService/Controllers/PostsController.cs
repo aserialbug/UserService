@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using UserService.Application.Models;
 using UserService.Application.Services;
 using UserService.Domain.Posts;
+using UserService.Filters;
 
 namespace UserService.Controllers;
 
@@ -19,6 +20,7 @@ public class PostsController : BaseController
     }
 
     [HttpPost]
+    [BusinessTransaction]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -61,6 +63,7 @@ public class PostsController : BaseController
     }
     
     [HttpPut("{postId}")]
+    [BusinessTransaction]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -75,6 +78,7 @@ public class PostsController : BaseController
     }
 
     [HttpDelete("{postId}")]
+    [BusinessTransaction]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

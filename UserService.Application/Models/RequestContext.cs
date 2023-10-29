@@ -6,6 +6,7 @@ public class RequestContext
 
     public void SetSession(Session session)
     {
+        ArgumentNullException.ThrowIfNull(session);
         if (Session != null)
             throw new InvalidOperationException("Session context has already been initialized!");
 

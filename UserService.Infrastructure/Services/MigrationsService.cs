@@ -21,12 +21,12 @@ public class MigrationsService
     private const string SystemDatabaseName = "postgres";
     private readonly IConfiguration _configuration;
     private readonly ILogger<MigrationsService> _logger;
-    private readonly MigrationsReader _migrationsReader;
+    private readonly MigrationDefinitionsService _migrationsReader;
     private readonly MigrationsServiceSettings _settings;
 
     public MigrationsService(IConfiguration configuration,
         ILogger<MigrationsService> logger,
-        MigrationsReader migrationsReader,
+        MigrationDefinitionsService migrationsReader,
         IOptions<MigrationsServiceSettings> settings)
     {
         _configuration = configuration;
@@ -76,7 +76,7 @@ public class MigrationsService
     private async Task ApplyMigrations()
     {
         var connectionString = ConnectionString.Parse(
-            _configuration.GetConnectionString("PostgreSqlContext"));
+            _configuration.GetConnectionString("PostgresContext"));
         
         await EnsureDatabaseCreated(connectionString);
 

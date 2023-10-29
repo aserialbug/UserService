@@ -2,7 +2,7 @@
 
 namespace UserService.Domain.Common;
 
-public class DomainEventId : SimpleId
+public sealed class DomainEventId : SimpleId
 {
     private DomainEventId(NewId id) : base(id)
     {
@@ -16,7 +16,7 @@ public class DomainEventId : SimpleId
         
         if (idTmp.Length != 2 ||
             !idTmp[0].Equals(nameof(DomainEventId)))
-            throw new ArgumentException($"Value {value} is invalid DomainEventId");
+            throw new ArgumentException($"Value {value} is invalid {nameof(DomainEventId)}");
         
         var id = new NewId(idTmp[1]);
         

@@ -1,19 +1,16 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 using Microsoft.Extensions.Logging;
 using UserService.Infrastructure.Models;
 
-namespace UserService.Infrastructure.Context;
+namespace UserService.Infrastructure.Services;
 
-public class MigrationsReader
+public class MigrationDefinitionsService
 {
     private const string MigrationsFile = "Migrations.xml";
     
-    private readonly ILogger<MigrationsReader> _logger;
+    private readonly ILogger<MigrationDefinitionsService> _logger;
 
-    public MigrationsReader(ILogger<MigrationsReader> logger)
+    public MigrationDefinitionsService(ILogger<MigrationDefinitionsService> logger)
     {
         _logger = logger;
     }

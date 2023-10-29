@@ -8,10 +8,10 @@ public static class Inject
 {
     public static IServiceCollection AddApplication(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton<LoginService>();
-        serviceCollection.AddSingleton<RegisterService>();
-        serviceCollection.AddSingleton<FriendsService>();
-        serviceCollection.AddSingleton<PostsService>();
+        serviceCollection.AddScoped<LoginService>();
+        serviceCollection.AddScoped<RegisterService>();
+        serviceCollection.AddScoped<FriendsService>();
+        serviceCollection.AddScoped<PostsService>();
         serviceCollection.AddScoped<RequestContext>();
         serviceCollection.AddSingleton<SessionManager>();
         return serviceCollection;

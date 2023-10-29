@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-using UserService.Application.Exceptions;
-using UserService.Application.Interfaces;
+﻿using UserService.Application.Interfaces;
 using UserService.Domain.User;
 using UserService.Infrastructure.Context;
 using UserService.Infrastructure.Services;
@@ -10,27 +8,23 @@ namespace UserService.Infrastructure.Repositories;
 internal class UserRepository : BaseRepository, IUserRepository
 {
     private readonly PepperService _pepperService;
+    private readonly EntitiesContext _entitiesContext;
 
-    public UserRepository(PepperService pepperService, PostgreSqlContext context) : base(context)
+    public UserRepository(PepperService pepperService, PostgresContext postgreSqlContext, EntitiesContext entitiesContext) : base(postgreSqlContext)
     {
         _pepperService = pepperService;
+        _entitiesContext = entitiesContext;
     }
 
-    public Task<User> this[UserId id] => GetById(id);
-
-    private async Task<User> GetById(UserId id)
-    {
-        return await DataSource.FindUserById(id, _pepperService)
-            ?? throw new NotFoundException($"User with id={id} was not found");
-    }
+    public Task<User> this[UserId id] => _entitiesContext.Users.GetAsync(id);
 
     public async Task Add(User entity)
     {
-        await DataSource.AddUser(entity, _pepperService);
+        await _entitiesContext.Users.AddAsync(entity);
     }
 
     public async Task Remove(User entity)
     {
-        await DataSource.RemoveUser(entity.Id);
+        await _entitiesContext.Users.DeleteAsync(entity);
     }
 }

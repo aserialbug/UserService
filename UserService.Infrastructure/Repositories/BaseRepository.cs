@@ -6,8 +6,8 @@ namespace UserService.Infrastructure.Repositories;
 internal abstract class BaseRepository
 {
     protected NpgsqlDataSource DataSource { get; }
-
-    protected BaseRepository(PostgreSqlContext postgreSqlContext)
+    
+    protected BaseRepository(PostgresContext postgreSqlContext)
     {
         DataSource = postgreSqlContext.Primary;
     }

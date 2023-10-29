@@ -6,6 +6,7 @@ using UserService.Application.Models;
 using UserService.Application.Services;
 using UserService.Domain.Person;
 using UserService.Domain.User;
+using UserService.Filters;
 using UserService.Utils;
 
 namespace UserService.Controllers;
@@ -25,6 +26,7 @@ public class UsersController : BaseController
     }
 
     [HttpPost]
+    [BusinessTransaction]
     [ProducesResponseType(typeof(RegisterResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]

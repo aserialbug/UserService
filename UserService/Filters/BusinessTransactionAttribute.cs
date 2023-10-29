@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using UserService.Application.Models;
+using UserService.Infrastructure.Context;
 
 namespace UserService.Filters;
 
@@ -18,41 +19,43 @@ public class BusinessTransactionAttribute : Attribute, IAsyncActionFilter
         
         if (requestContext.Session == null)
             throw new InvalidOperationException("No active session for current request");
+        var entityContext = context.HttpContext
+            .RequestServices
+            .GetRequiredService<EntitiesContext>();
 
         logger.LogInformation(
             "Creating business transaction for request {Request}, trace={Tracing}",
             context.ActionDescriptor.DisplayName,
             requestContext.Session.Id);
 
-        var transaction = await requestContext.Session.StartTransaction();
-
+        await using var transaction = await entityContext.BeginTransactionAsync();
         var result = await next();
-        if (result.Exception == null)
-        {
-            logger.LogInformation(
-                "Commiting business transaction for request {Request}, trace={Tracing}",
-                context.ActionDescriptor.DisplayName,
-                requestContext.Session.Id);
-            try
-            {
-                await transaction.Commit();
-            }
-            catch (Exception e)
-            {
-                logger.LogError(e,
-                    "Error committing transaction for request {Request}, rolling back, trace={Tracing}",
-                    context.ActionDescriptor.DisplayName,
-                    requestContext.Session.Id);
-                await transaction.Rollback();
-            }
-        }
-        else
+        if (result.Exception != null)
         {
             logger.LogError(result.Exception,
                 "Error occurred, transaction for request {Request} will not be committed, trace={Tracing}",
                 context.ActionDescriptor.DisplayName,
                 requestContext.Session.Id);
-            await transaction.Cancel();
+            await transaction.Rollback();
+            return;
         }
+
+        try
+        {
+            await entityContext.SaveChangesAsync();
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(result.Exception,
+                "Error saving changes for request {Request} rolling back transaction, trace={Tracing}",
+                context.ActionDescriptor.DisplayName,
+                requestContext.Session.Id);
+            result.Exception = exception;
+            await transaction.Rollback();
+            return;
+        }
+        
+
+        await transaction.Commit();
     }
 }

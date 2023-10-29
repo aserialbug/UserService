@@ -74,4 +74,15 @@
             on friendships using gin (smaller_first(friend_from, friend_to));
         </Body>
     </MigrationDefinition>
+    <MigrationDefinition>
+        <Order>3</Order>
+        <Description>Add domain events table</Description>
+        <Body>
+            create table domain_events (
+            id          uuid primary key,
+            type        text,
+            content     jsonb
+            );
+        </Body>
+    </MigrationDefinition>
 </ArrayOfMigrationDefinition>
