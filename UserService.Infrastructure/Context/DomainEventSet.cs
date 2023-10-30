@@ -15,7 +15,7 @@ public class DomainEventSet
         _unitOfWork = unitOfWork;
     }
 
-    public Task RegisterEvent(DomainEvent domainEvent)
+    public Task Register(DomainEvent domainEvent)
     {
         _unitOfWork.RegisterEvent(domainEvent);
         return Task.CompletedTask;

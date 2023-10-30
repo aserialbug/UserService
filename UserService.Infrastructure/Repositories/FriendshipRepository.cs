@@ -1,4 +1,5 @@
 ﻿using UserService.Application.Interfaces;
+using UserService.Domain.Common;
 using UserService.Domain.Friends;
 using UserService.Infrastructure.Context;
 
@@ -15,10 +16,14 @@ internal class FriendshipRepository : BaseRepository, IFriendshipRepository
     public async Task Add(Friendship entity)
     {
         await Context.Friendships.AddAsync(entity);
+        await Context.DomainEvents.Register(new FriendshipCreatedDomainEvent(DomainEventId.New(), DateTime.Now,
+            entity.Id.From, entity.Id.To));
     }
 
     public async Task Remove(Friendship entity)
     {
         await Context.Friendships.DeleteAsync(entity);
+        await Context.DomainEvents.Register(new FriendshipDeletedDomainEvent(DomainEventId.New(), DateTime.Now,
+            entity.Id.From, entity.Id.To));
     }
 }
