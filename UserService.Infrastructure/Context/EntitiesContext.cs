@@ -18,12 +18,14 @@ public class EntitiesContext
     public EntitySet<Person, PersonId>? Persons { get; private set; }
     public EntitySet<Post, PostId>? Posts { get; private set; }
     public EntitySet<Friendship, FriendshipId>? Friendships { get; private set; }
+    public DomainEventSet DomainEvents { get; }
 
     public EntitiesContext(PostgresContext postgresContext, DomainEventsDatabaseAdapter domainEventsDatabaseAdapter, ServiceFactory serviceFactory)
     {
         _postgresContext = postgresContext;
         _domainEventsDatabaseAdapter = domainEventsDatabaseAdapter;
         _serviceFactory = serviceFactory;
+        DomainEvents = new DomainEventSet(_unitOfWork);
     }
 
     public async Task<DatabaseTransaction> BeginTransactionAsync()
