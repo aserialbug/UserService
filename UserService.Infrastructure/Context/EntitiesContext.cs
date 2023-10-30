@@ -1,4 +1,7 @@
-﻿using UserService.Domain.User;
+﻿using UserService.Domain.Friends;
+using UserService.Domain.Person;
+using UserService.Domain.Posts;
+using UserService.Domain.User;
 using UserService.Infrastructure.Adapters;
 
 namespace UserService.Infrastructure.Context;
@@ -12,6 +15,9 @@ public class EntitiesContext
     private readonly ServiceFactory _serviceFactory;
 
     public EntitySet<User, UserId>? Users { get; private set; }
+    public EntitySet<Person, PersonId>? Persons { get; private set; }
+    public EntitySet<Post, PostId>? Posts { get; private set; }
+    public EntitySet<Friendship, FriendshipId>? Friendships { get; private set; }
 
     public EntitiesContext(PostgresContext postgresContext, DomainEventsDatabaseAdapter domainEventsDatabaseAdapter, ServiceFactory serviceFactory)
     {
@@ -27,6 +33,9 @@ public class EntitiesContext
         
         _transaction = await _postgresContext.BeginTransactionAsync();
         Users = new EntitySet<User, UserId>(_serviceFactory.GetAdapter<User, UserId>(), _unitOfWork, _transaction);
+        Persons = new EntitySet<Person, PersonId>(_serviceFactory.GetAdapter<Person, PersonId>(), _unitOfWork, _transaction);
+        Posts = new EntitySet<Post, PostId>(_serviceFactory.GetAdapter<Post, PostId>(), _unitOfWork, _transaction);
+        Friendships = new EntitySet<Friendship, FriendshipId>(_serviceFactory.GetAdapter<Friendship, FriendshipId>(), _unitOfWork, _transaction);
         
         return _transaction;
     }

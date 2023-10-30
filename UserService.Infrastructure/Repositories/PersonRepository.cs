@@ -11,25 +11,19 @@ namespace UserService.Infrastructure.Repositories;
 
 internal class PersonRepository : BaseRepository, IPersonRepository
 {
-    public PersonRepository(PostgresContext postgreSqlContext) : base(postgreSqlContext)
-    {
-    }
-
-    public Task<Person> this[PersonId id] => GetById(id);
+    public Task<Person> this[PersonId id] => Context.Persons.GetAsync(id);
     
-    private async Task<Person> GetById(PersonId id)
+    public PersonRepository(EntitiesContext entitiesContext) : base(entitiesContext)
     {
-        var person  = await DataSource.GetPersonById(id);
-        return person;
     }
 
     public async Task Add(Person entity)
     {
-        await DataSource.AddPerson(entity);
+        await Context.Persons.AddAsync(entity);
     }
 
     public async Task Remove(Person entity)
     {
-        await DataSource.RemovePerson(entity.Id);
+        await Context.Persons.DeleteAsync(entity);
     }
 }

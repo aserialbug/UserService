@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using UserService.Domain.Friends;
+using UserService.Domain.Person;
+using UserService.Domain.Posts;
 using UserService.Domain.User;
 using UserService.Infrastructure.Context;
 
@@ -10,6 +13,9 @@ public static class Inject
     {
         serviceCollection.AddSingleton<DomainEventsDatabaseAdapter>();
         serviceCollection.AddSingleton<IStorageAdapter<User, UserId>, UserDatabaseAdapter>();
+        serviceCollection.AddSingleton<IStorageAdapter<Person, PersonId>, PersonDatabaseAdapter>();
+        serviceCollection.AddSingleton<IStorageAdapter<Post, PostId>, PostsDatabaseAdapter>();
+        serviceCollection.AddSingleton<IStorageAdapter<Friendship, FriendshipId>, FriendshipDatabaseAdapter>();
         return serviceCollection;
     }
 }

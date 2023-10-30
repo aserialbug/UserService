@@ -7,25 +7,19 @@ namespace UserService.Infrastructure.Repositories;
 
 internal class PostRepository : BaseRepository, IPostRepository
 {
-    public PostRepository(PostgresContext postgreSqlContext) : base(postgreSqlContext)
-    {
-    }
-
-    public Task<Post> this[PostId id] => GetById(id);
+    public Task<Post> this[PostId id] => Context.Posts.GetAsync(id);
     
-    private async Task<Post> GetById(PostId id)
+    public PostRepository(EntitiesContext entitiesContext) : base(entitiesContext)
     {
-        var post  = await DataSource.GetPost(id);
-        return post;
     }
 
     public async Task Add(Post entity)
     {
-        await DataSource.AddPost(entity);
+        await Context.Posts.AddAsync(entity);
     }
 
     public async Task Remove(Post entity)
     {
-        await DataSource.RemovePost(entity.Id);
+        await Context.Posts.DeleteAsync(entity);
     }
 }

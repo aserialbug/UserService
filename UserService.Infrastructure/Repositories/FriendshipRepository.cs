@@ -6,26 +6,19 @@ namespace UserService.Infrastructure.Repositories;
 
 internal class FriendshipRepository : BaseRepository, IFriendshipRepository
 {
-    public FriendshipRepository(PostgresContext postgreSqlContext) : base(postgreSqlContext)
+    public Task<Friendship> this[FriendshipId id] => Context.Friendships.GetAsync(id);
+    
+    public FriendshipRepository(EntitiesContext entitiesContext) : base(entitiesContext)
     {
-    }
-
-    public Task<Friendship> this[FriendshipId id]
-        => GetById(id);
-
-    private async Task<Friendship> GetById(FriendshipId id)
-    {
-        var friendship  = await DataSource.GetFriendship(id);
-        return friendship;
     }
 
     public async Task Add(Friendship entity)
     {
-        await DataSource.AddFriendship(entity);
+        await Context.Friendships.AddAsync(entity);
     }
 
     public async Task Remove(Friendship entity)
     {
-        await DataSource.RemoveFriendship(entity.Id);
+        await Context.Friendships.DeleteAsync(entity);
     }
 }
