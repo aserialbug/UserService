@@ -19,7 +19,7 @@ public class RequestLoggingMiddleware : IMiddleware
         _logger.LogInformation("Handling {Method} {Url}; trace={Tracing}",
             context.Request.Method, 
             context.Request.Path.Value,
-            _context.Session.Id);
+            _context.SessionId);
         var stopwatch = Stopwatch.StartNew();
         try
         {
@@ -33,7 +33,7 @@ public class RequestLoggingMiddleware : IMiddleware
                 context.Request.Path.Value, 
                 context.Response.StatusCode,
                 stopwatch.ElapsedMilliseconds,
-                _context.Session.Id);
+                _context.SessionId);
         }
     }
 }
