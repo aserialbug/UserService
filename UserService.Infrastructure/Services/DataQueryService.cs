@@ -16,7 +16,7 @@ internal class DataQueryService : IDataQueryService
     
     private NpgsqlDataSource DataSource { get; }
 
-    public DataQueryService(PostgreSqlContext context, PepperService pepperService)
+    public DataQueryService(PostgresContext context, PepperService pepperService)
     {
         DataSource = context.Standby;
         _pepperService = pepperService;

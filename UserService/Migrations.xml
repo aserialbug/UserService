@@ -17,6 +17,13 @@
             biography   text,
             city        text
             );
+
+            CREATE TABLE domain_events (
+            id          uuid primary key,
+            sequence    serial,
+            type        text,
+            event       jsonb
+            );
         </Body>
     </MigrationDefinition>
     <MigrationDefinition>
@@ -65,6 +72,17 @@
             -- Create search index - GIN
             create index if not exists test_array_gin_idx
             on friendships using gin (smaller_first(friend_from, friend_to));
+        </Body>
+    </MigrationDefinition>
+    <MigrationDefinition>
+        <Order>3</Order>
+        <Description>Add domain events table</Description>
+        <Body>
+            create table domain_events (
+            id          uuid primary key,
+            type        text,
+            content     jsonb
+            );
         </Body>
     </MigrationDefinition>
 </ArrayOfMigrationDefinition>

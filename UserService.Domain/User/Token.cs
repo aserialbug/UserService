@@ -1,4 +1,7 @@
-﻿using UserService.Domain.Common;
+﻿using System;
+using System.Collections.Generic;
+using UserService.Domain.Common;
+using UserService.Domain.Common;
 
 namespace UserService.Domain.User;
 
@@ -17,22 +20,11 @@ public class Token : ValueObject
     }
 
     public override string ToString()
-    {
-        return _token;
-    }
+        => _token;
 
-    public static Token New()
-    {
-        return new(Guid.NewGuid().ToString());
-    }
+    public static Token New() => new (Guid.NewGuid().ToString());
+    
+    public static bool operator ==(Token left, Token right) => EqualOperator(left, right);
 
-    public static bool operator ==(Token left, Token right)
-    {
-        return EqualOperator(left, right);
-    }
-
-    public static bool operator !=(Token left, Token right)
-    {
-        return NotEqualOperator(left, right);
-    }
+    public static bool operator !=(Token left, Token right) => NotEqualOperator(left, right);
 }

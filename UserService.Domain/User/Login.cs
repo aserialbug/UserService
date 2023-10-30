@@ -18,29 +18,21 @@ public class Login : ValueObject
 
         if (value.Length < 4)
             throw new ArgumentException("Слишком короткий логин. Логин должен быть длиннее 3х символов");
-
+        
         // Проверка прочих парольных политик
-
+        
         return new Login(value);
     }
 
     public override string ToString()
-    {
-        return _login;
-    }
+        => _login;
 
     protected override IEnumerable<object?> GetEqualityComponents()
     {
         yield return _login;
     }
+    
+    public static bool operator ==(Login left, Login right) => EqualOperator(left, right);
 
-    public static bool operator ==(Login left, Login right)
-    {
-        return EqualOperator(left, right);
-    }
-
-    public static bool operator !=(Login left, Login right)
-    {
-        return NotEqualOperator(left, right);
-    }
+    public static bool operator !=(Login left, Login right) => NotEqualOperator(left, right);
 }

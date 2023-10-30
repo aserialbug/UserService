@@ -1,14 +1,14 @@
-﻿using Npgsql;
+using Npgsql;
 using UserService.Infrastructure.Context;
 
 namespace UserService.Infrastructure.Repositories;
 
 internal abstract class BaseRepository
 {
-    protected NpgsqlDataSource DataSource { get; }
-
-    protected BaseRepository(PostgreSqlContext postgreSqlContext)
+    protected EntitiesContext Context { get; }
+    
+    protected BaseRepository(EntitiesContext entitiesContext)
     {
-        DataSource = postgreSqlContext.Primary;
+        Context = entitiesContext;
     }
 }

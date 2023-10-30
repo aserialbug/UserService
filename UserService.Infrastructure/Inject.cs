@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using UserService.Application.Interfaces;
+using UserService.Infrastructure.Adapters;
 using UserService.Infrastructure.Context;
 using UserService.Infrastructure.Repositories;
 using UserService.Infrastructure.Services;
@@ -13,10 +14,10 @@ public static class Inject
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
-        serviceCollection.AddSingleton<IPersonRepository, PersonRepository>();
-        serviceCollection.AddSingleton<IUserRepository, UserRepository>();
-        serviceCollection.AddSingleton<IFriendshipRepository, FriendshipRepository>();
-        serviceCollection.AddSingleton<IPostRepository, PostRepository>();
+        serviceCollection.AddScoped<IPersonRepository, PersonRepository>();
+        serviceCollection.AddScoped<IUserRepository, UserRepository>();
+        serviceCollection.AddScoped<IFriendshipRepository, FriendshipRepository>();
+        serviceCollection.AddScoped<IPostRepository, PostRepository>();
         serviceCollection.AddSingleton<ITokenService, TokenService>();
         serviceCollection.Configure<TokenService.TokenGeneratorServiceSettings>(
             configuration.GetSection(TokenService.TokenGeneratorServiceSettings.SectionName));
@@ -26,13 +27,14 @@ public static class Inject
         serviceCollection.AddSingleton<PepperService>();
         serviceCollection.Configure<PepperService.PepperServiceSettings>(
             configuration.GetSection(PepperService.PepperServiceSettings.SectionName));
-        serviceCollection.AddSingleton<PostgreSqlContext>();
+        serviceCollection.AddSingleton<PostgresContext>();
         serviceCollection.AddSingleton<JwtSecurityTokenHandler>();
         serviceCollection.AddSingleton<IDataQueryService, DataQueryService>();
         serviceCollection.AddTransient<MigrationsService>();
         serviceCollection.Configure<MigrationsService.MigrationsServiceSettings>(
             configuration.GetSection(MigrationsService.MigrationsServiceSettings.SectionName));
-        serviceCollection.AddTransient<MigrationsReader>();
+        serviceCollection.AddTransient<MigrationDefinitionsService>();
+        serviceCollection.AddEntitiesContext();
         return serviceCollection;
     }
 }

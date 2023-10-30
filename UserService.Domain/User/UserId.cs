@@ -1,4 +1,5 @@
-﻿using MassTransit;
+using MassTransit;
+using MassTransit;
 using UserService.Domain.Common;
 
 namespace UserService.Domain.User;
@@ -8,11 +9,8 @@ public class UserId : SimpleId
     private UserId(NewId id) : base(id)
     {
     }
-
-    public static UserId New()
-    {
-        return new(NewId.Next());
-    }
+    
+    public static UserId New() => new (NewId.Next());
 
     public static UserId Parse(string value)
     {

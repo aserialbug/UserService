@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Application.Services;
 using UserService.Domain.User;
+using UserService.Filters;
 
 namespace UserService.Controllers;
 
@@ -33,6 +34,7 @@ public class FriendsController : BaseController
     }
 
     [HttpPost("{friendId}")]
+    [BusinessTransaction]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -47,6 +49,7 @@ public class FriendsController : BaseController
     }
     
     [HttpDelete("{friendId}")]
+    [BusinessTransaction]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

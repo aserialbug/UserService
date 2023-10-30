@@ -30,6 +30,7 @@ builder.Services.AddSwaggerGen(options =>
     options.OperationFilter<SecurityRequirementsOperationFilter>("Bearer");
 });
 builder.Services.AddScoped<RequestLoggingMiddleware>();
+builder.Services.AddScoped<SessionMiddleware>();
 builder.Services.Configure<KestrelServerOptions>(
     builder.Configuration.GetSection("Kestrel"));
 builder.Logging.AddConsole();
@@ -52,6 +53,7 @@ app.Logger.LogInformation("Migrations applied successfully");
 
 
 // Configure the HTTP request pipeline.
+app.UseMiddleware<SessionMiddleware>();
 app.UseMiddleware<RequestLoggingMiddleware>();
 if (app.Environment.IsDevelopment())
 {
