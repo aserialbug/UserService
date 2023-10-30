@@ -2,14 +2,10 @@
 
 public class RequestContext
 {
-    public Session? Session { get; private set; }
+    public SessionId? SessionId { get; private set; }
 
-    public void SetSession(Session session)
+    public void SetSession(SessionId? session = null)
     {
-        ArgumentNullException.ThrowIfNull(session);
-        if (Session != null)
-            throw new InvalidOperationException("Session context has already been initialized!");
-
-        Session = session;
+        SessionId = session ?? SessionId.New();
     }
 }

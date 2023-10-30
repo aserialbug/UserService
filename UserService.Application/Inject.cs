@@ -13,7 +13,6 @@ public static class Inject
         serviceCollection.AddScoped<FriendsService>();
         serviceCollection.AddScoped<PostsService>();
         serviceCollection.AddScoped<RequestContext>();
-        serviceCollection.AddSingleton<SessionManager>();
         return serviceCollection;
     }
 }

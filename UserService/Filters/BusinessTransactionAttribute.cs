@@ -17,8 +17,9 @@ public class BusinessTransactionAttribute : Attribute, IAsyncActionFilter
             .RequestServices
             .GetRequiredService<RequestContext>();
         
-        if (requestContext.Session == null)
+        if (requestContext.SessionId == null)
             throw new InvalidOperationException("No active session for current request");
+        
         var entityContext = context.HttpContext
             .RequestServices
             .GetRequiredService<EntitiesContext>();
@@ -26,7 +27,7 @@ public class BusinessTransactionAttribute : Attribute, IAsyncActionFilter
         logger.LogInformation(
             "Creating business transaction for request {Request}, trace={Tracing}",
             context.ActionDescriptor.DisplayName,
-            requestContext.Session.Id);
+            requestContext.SessionId);
 
         await using var transaction = await entityContext.BeginTransactionAsync();
         var result = await next();
@@ -35,7 +36,7 @@ public class BusinessTransactionAttribute : Attribute, IAsyncActionFilter
             logger.LogError(result.Exception,
                 "Error occurred, transaction for request {Request} will not be committed, trace={Tracing}",
                 context.ActionDescriptor.DisplayName,
-                requestContext.Session.Id);
+                requestContext.SessionId);
             await transaction.Rollback();
             return;
         }
@@ -49,7 +50,7 @@ public class BusinessTransactionAttribute : Attribute, IAsyncActionFilter
             logger.LogError(result.Exception,
                 "Error saving changes for request {Request} rolling back transaction, trace={Tracing}",
                 context.ActionDescriptor.DisplayName,
-                requestContext.Session.Id);
+                requestContext.SessionId);
             result.Exception = exception;
             await transaction.Rollback();
             return;
