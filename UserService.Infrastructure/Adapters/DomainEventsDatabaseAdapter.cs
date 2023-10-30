@@ -10,7 +10,7 @@ public class DomainEventsDatabaseAdapter
 {
     private static readonly JsonSerializerSettings SerializerSettings = new()
     {
-        Converters = new List<JsonConverter>()
+        Converters = new List<JsonConverter>
         {
             new UserIdJsonConverter(),
             new DomainEventIdJsonConverter(),
