@@ -14,6 +14,6 @@ public class UserIdJsonConverter : JsonConverter<UserId>
     public override UserId? ReadJson(JsonReader reader, Type objectType, UserId? existingValue, bool hasExistingValue,
         JsonSerializer serializer)
     {
-        return UserId.Parse(reader.ReadAsString());
+        return UserId.Parse(reader.Value.ToString());
     }
 }

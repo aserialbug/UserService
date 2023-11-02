@@ -1,6 +1,8 @@
-﻿namespace UserService.Domain.Common;
+﻿using MediatR;
 
-public abstract class DomainEvent
+namespace UserService.Domain.Common;
+
+public abstract class DomainEvent : INotification
 {
     public DomainEventId Id { get; }
     public DateTime CreatedAt { get; }

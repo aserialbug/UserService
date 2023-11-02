@@ -12,6 +12,6 @@ public class PostIdJsonConverter : JsonConverter<PostId>
 
     public override PostId? ReadJson(JsonReader reader, Type objectType, PostId? existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
-        return PostId.Parse(reader.ReadAsString());
+        return PostId.Parse(reader.Value.ToString());
     }
 }

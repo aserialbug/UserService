@@ -2,23 +2,20 @@
 using NpgsqlTypes;
 using UserService.Domain.Common;
 using UserService.Infrastructure.Context;
-using UserService.Infrastructure.Converters;
+using UserService.Infrastructure.Services;
 
 namespace UserService.Infrastructure.Adapters;
 
 public class DomainEventsDatabaseAdapter
 {
-    private static readonly JsonSerializerSettings SerializerSettings = new()
-    {
-        Converters = new List<JsonConverter>
-        {
-            new UserIdJsonConverter(),
-            new DomainEventIdJsonConverter(),
-            new PostIdJsonConverter()
-        }
-    };
-    
+    private readonly SerializationService _serializationService;
+
     private const string AddRangeSql = "insert into domain_events (id, type, content) values (@id, @type, @content)";
+
+    public DomainEventsDatabaseAdapter(SerializationService serializationService)
+    {
+        _serializationService = serializationService;
+    }
 
     public async Task AddRange(IEnumerable<DomainEvent> domainEvents, DatabaseTransaction transaction)
     {
@@ -30,8 +27,8 @@ public class DomainEventsDatabaseAdapter
             {
                 var cmd = transaction.CreateBatchCommand(AddRangeSql);
                 cmd.Parameters.AddWithValue("id", NpgsqlDbType.Uuid, evt.Id.ToGuid());
-                cmd.Parameters.AddWithValue("type", NpgsqlDbType.Text, evt.GetType().Name);
-                cmd.Parameters.AddWithValue("content", NpgsqlDbType.Jsonb, JsonConvert.SerializeObject(evt, SerializerSettings));
+                cmd.Parameters.AddWithValue("type", NpgsqlDbType.Text, evt.GetType().AssemblyQualifiedName);
+                cmd.Parameters.AddWithValue("content", NpgsqlDbType.Jsonb, _serializationService.Serialize(evt));
                 return cmd;
             });
 
