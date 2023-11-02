@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using UserService.Application.DomainEventHandlers;
 using UserService.Application.Models;
 using UserService.Application.Services;
 
@@ -13,6 +15,8 @@ public static class Inject
         serviceCollection.AddScoped<FriendsService>();
         serviceCollection.AddScoped<PostsService>();
         serviceCollection.AddScoped<RequestContext>();
+        serviceCollection.AddMediatR(configuration =>
+            configuration.RegisterServicesFromAssemblyContaining(typeof(BaseDomainEventHandler<>)));
         return serviceCollection;
     }
 }

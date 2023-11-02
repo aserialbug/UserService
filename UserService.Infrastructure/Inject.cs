@@ -25,6 +25,7 @@ public static class Inject
         serviceCollection.Configure<HashingService.HashingServiceSettings>(
             configuration.GetSection(HashingService.HashingServiceSettings.SectionName));
         serviceCollection.AddSingleton<PepperService>();
+        serviceCollection.AddSingleton<SerializationService>();
         serviceCollection.Configure<PepperService.PepperServiceSettings>(
             configuration.GetSection(PepperService.PepperServiceSettings.SectionName));
         serviceCollection.AddSingleton<PostgresContext>();
@@ -34,6 +35,9 @@ public static class Inject
         serviceCollection.Configure<MigrationsService.MigrationsServiceSettings>(
             configuration.GetSection(MigrationsService.MigrationsServiceSettings.SectionName));
         serviceCollection.AddTransient<MigrationDefinitionsService>();
+        serviceCollection.AddHostedService<DomainEventsDispatcherService>();
+        serviceCollection.Configure<DomainEventsDispatcherService.DomainEventsDispatcherServiceSettings>(
+            configuration.GetSection(DomainEventsDispatcherService.DomainEventsDispatcherServiceSettings.SectionName));
         serviceCollection.AddEntitiesContext();
         return serviceCollection;
     }

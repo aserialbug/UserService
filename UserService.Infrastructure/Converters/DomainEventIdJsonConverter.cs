@@ -13,6 +13,6 @@ public class DomainEventIdJsonConverter : JsonConverter<DomainEventId>
     public override DomainEventId? ReadJson(JsonReader reader, Type objectType, DomainEventId? existingValue, bool hasExistingValue,
         JsonSerializer serializer)
     {
-        return DomainEventId.Parse(reader.ReadAsString());
+        return DomainEventId.Parse(reader.Value.ToString());
     }
 }
