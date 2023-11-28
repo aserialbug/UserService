@@ -100,10 +100,10 @@ public class PostsController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<IEnumerable<PostViewModel>> GetFeed()
+    public async Task<PagedResult<PostViewModel>> GetFeed([FromQuery]int count, string? next)
     {
         var id = GetAuthenticatedUser()
                  ?? throw new UnauthorizedAccessException();
-        return await _feedService.GetFeed(id);
+        return await _feedService.GetPagedFeed(id, count, next);
     }
 }

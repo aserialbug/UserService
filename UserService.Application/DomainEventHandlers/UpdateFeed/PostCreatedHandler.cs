@@ -1,27 +1,20 @@
 ﻿using Microsoft.Extensions.Logging;
-using UserService.Application.Interfaces;
+using UserService.Application.Services;
 using UserService.Domain.Posts;
-using UserService.Domain.User;
 
 namespace UserService.Application.DomainEventHandlers.UpdateFeed;
 
 public class PostCreatedHandler : BaseDomainEventHandler<PostCreatedDomainEvent>
 {
-    private readonly IDataQueryService _dataQueryService;
-    private readonly IFeedCacheService _feedCacheService;
+    private readonly FeedService _feedService;
 
-    public PostCreatedHandler(ILoggerFactory loggerFactory, IDataQueryService dataQueryService, IFeedCacheService feedCacheService) : base(loggerFactory)
+    public PostCreatedHandler(ILoggerFactory loggerFactory, FeedService feedService) : base(loggerFactory)
     {
-        _dataQueryService = dataQueryService;
-        _feedCacheService = feedCacheService;
+        _feedService = feedService;
     }
 
     protected override async Task ProtectedHandle(PostCreatedDomainEvent notification, CancellationToken cancellationToken)
     {
-        var friends = _dataQueryService.FindFriends(notification.AuthorId);
-        var post = _dataQueryService.FindPost(notification.PostId);
-        await Task.WhenAll(friends, post);
-
-        await _feedCacheService.AddPost(friends.Result.Select(UserId.Parse).Append(notification.AuthorId), post.Result);
+        await _feedService.AddPostToFeeds(notification.PostId, notification.AuthorId);
     }
 }

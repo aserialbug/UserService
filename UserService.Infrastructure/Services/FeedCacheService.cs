@@ -18,16 +18,18 @@ public class FeedCacheService : IFeedCacheService
     {
         _serializationService = serializationService;
         _redis = ConnectionMultiplexer.Connect(options.Value.ConnectionString);
-        _maxUserFeedLength = Math.Max(options.Value.MaxUserFeedLength, MinFeedLength); }
+        _maxUserFeedLength = Math.Max(options.Value.MaxUserFeedLength, MinFeedLength); 
+    }
     
-    public async Task<IEnumerable<PostViewModel>> GetFeed(UserId userId)
+    public async Task<IEnumerable<PostViewModel>> GetFeed(UserId userId, int count, string page)
     {
         var db = _redis.GetDatabase();
         var feed = await db.ListRangeAsync(new RedisKey(userId.ToString()));
 
         return feed
             .Where(p => !p.IsNullOrEmpty)
-            .Select(p => _serializationService.Deserialize<PostViewModel>(p.ToString()) ?? throw new InvalidOperationException());
+            .Select(p => _serializationService.Deserialize<PostViewModel>(p.ToString()) ?? throw new InvalidOperationException())
+            .ToArray();
     }
 
     public async Task AddPost(IEnumerable<UserId> users, PostViewModel postViewModel)

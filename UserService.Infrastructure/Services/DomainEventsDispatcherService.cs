@@ -16,18 +16,15 @@ public class DomainEventsDispatcherService : BackgroundService
     private readonly DomainEventsDispatcherServiceSettings _settings;
     private readonly ILogger<DomainEventsDispatcherService> _logger;
     private readonly SerializationService _serializationService;
-    // private readonly IMediator _mediator;
     private readonly IServiceProvider _serviceProvider;
 
     public DomainEventsDispatcherService(IOptions<DomainEventsDispatcherServiceSettings> options,
         ILogger<DomainEventsDispatcherService> logger,
         SerializationService serializationService,
-        // IMediator mediator,
         IServiceProvider serviceProvider)
     {
         _logger = logger;
         _serializationService = serializationService;
-        // _mediator = mediator;
         _serviceProvider = serviceProvider;
         _settings = options.Value;
     }
