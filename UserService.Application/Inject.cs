@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using MediatR.NotificationPublishers;
 using Microsoft.Extensions.DependencyInjection;
 using UserService.Application.DomainEventHandlers;
 using UserService.Application.Models;
@@ -15,8 +16,12 @@ public static class Inject
         serviceCollection.AddScoped<FriendsService>();
         serviceCollection.AddScoped<PostsService>();
         serviceCollection.AddScoped<RequestContext>();
+        serviceCollection.AddScoped<FeedService>();
         serviceCollection.AddMediatR(configuration =>
-            configuration.RegisterServicesFromAssemblyContaining(typeof(BaseDomainEventHandler<>)));
+        {
+            configuration.RegisterServicesFromAssemblyContaining(typeof(BaseDomainEventHandler<>));
+            configuration.NotificationPublisher = new TaskWhenAllPublisher();
+        });
         return serviceCollection;
     }
 }

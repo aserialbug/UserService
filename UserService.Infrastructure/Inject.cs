@@ -18,6 +18,9 @@ public static class Inject
         serviceCollection.AddScoped<IUserRepository, UserRepository>();
         serviceCollection.AddScoped<IFriendshipRepository, FriendshipRepository>();
         serviceCollection.AddScoped<IPostRepository, PostRepository>();
+        serviceCollection.AddSingleton<IFeedCacheService, FeedCacheService>();
+        serviceCollection.Configure<FeedCacheService.FeedCacheServiceSettings>(
+            configuration.GetSection(FeedCacheService.FeedCacheServiceSettings.SectionName));
         serviceCollection.AddSingleton<ITokenService, TokenService>();
         serviceCollection.Configure<TokenService.TokenGeneratorServiceSettings>(
             configuration.GetSection(TokenService.TokenGeneratorServiceSettings.SectionName));

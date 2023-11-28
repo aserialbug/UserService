@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Net.Http.Headers;
+using Newtonsoft.Json;
 using UserService.Infrastructure.Converters;
 
 namespace UserService.Infrastructure.Services;
@@ -26,5 +27,10 @@ public class SerializationService
     {
         var typeInstance = Type.GetType(typeName);
         return typeInstance == null ? null : JsonConvert.DeserializeObject(body, typeInstance, SerializerSettings);
+    }
+
+    public TValue? Deserialize<TValue>(string body)
+    {
+        return JsonConvert.DeserializeObject<TValue>(body);
     }
 }

@@ -13,10 +13,12 @@ namespace UserService.Controllers;
 public class PostsController : BaseController
 {
     private readonly PostsService _postsService;
+    private readonly FeedService _feedService;
 
-    public PostsController(PostsService postsService)
+    public PostsController(PostsService postsService, FeedService feedService)
     {
         _postsService = postsService;
+        _feedService = feedService;
     }
 
     [HttpPost]
@@ -90,5 +92,18 @@ public class PostsController : BaseController
                  ?? throw new UnauthorizedAccessException();
         var post = PostId.Parse(postId);
         await _postsService.Delete(id, post);
+    }
+    
+    [HttpGet("feed")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<IEnumerable<PostViewModel>> GetFeed()
+    {
+        var id = GetAuthenticatedUser()
+                 ?? throw new UnauthorizedAccessException();
+        return await _feedService.GetFeed(id);
     }
 }

@@ -13,4 +13,5 @@ public interface IDataQueryService
     Task<IEnumerable<string>> FindFriends(UserId userId);
     Task<PostViewModel?> FindPost(PostId postId);
     Task<IEnumerable<PostViewModel>> GetPosts(UserId userId);
+    Task<IEnumerable<PostViewModel>> BuildFeed(UserId userId);
 }

@@ -51,4 +51,11 @@ internal class DataQueryService : IDataQueryService
     {
         return await DataSource.GetUserPosts(userId);
     }
+
+    public async Task<IEnumerable<PostViewModel>> BuildFeed(UserId userId)
+    {
+        var friends = await DataSource.FindFriends(userId);
+        
+        return await DataSource.BuildFeed(friends);
+    }
 }
