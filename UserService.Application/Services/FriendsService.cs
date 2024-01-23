@@ -19,7 +19,7 @@ public class FriendsService
 
     public async Task<IEnumerable<string>> GetFriends(UserId userId)
     {
-        return await _dataQueryService.FindFriends(userId);
+        return await _dataQueryService.FindFriends(userId.ToString());
     }
 
     public async Task Add(UserId userId, UserId friendId)

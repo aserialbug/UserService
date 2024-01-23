@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.Extensions.Logging;
-using UserService.Application.Interfaces;
+﻿using Microsoft.Extensions.Logging;
 using UserService.Application.Services;
 using UserService.Domain.Friends;
 
@@ -15,10 +13,10 @@ public class FriendAddedHandler : BaseDomainEventHandler<FriendshipCreatedDomain
         _feedService = feedService;
     }
 
-    protected override async Task ProtectedHandle(FriendshipCreatedDomainEvent notification, CancellationToken cancellationToken)
+    protected override async Task ProtectedHandle(FriendshipCreatedDomainEvent notification, CancellationToken cancellationToken = default)
     {
         await Task.WhenAll(
-            _feedService.RebuildFeed(notification.From),
-            _feedService.RebuildFeed(notification.To));
+            _feedService.RebuildFeedAsync(notification.From, cancellationToken),
+            _feedService.RebuildFeedAsync(notification.To, cancellationToken));
     }
 }

@@ -37,7 +37,7 @@ internal class DataQueryService : IDataQueryService
         return await DataSource.SearchByName(firstName, lastName);
     }
 
-    public async Task<IEnumerable<string>> FindFriends(UserId userId)
+    public async Task<IEnumerable<string>> FindFriends(string userId)
     {
         return await DataSource.FindFriends(userId);
     }
@@ -52,10 +52,15 @@ internal class DataQueryService : IDataQueryService
         return await DataSource.GetUserPosts(userId);
     }
 
-    public async Task<IEnumerable<PostViewModel>> BuildFeed(UserId userId)
+    public async Task<IEnumerable<PostViewModel>> BuildFeed(string userId)
     {
         var friends = await DataSource.FindFriends(userId);
         
         return await DataSource.BuildFeed(friends);
+    }
+
+    public async Task<IEnumerable<PostViewModel>> GetPostsByIds(IEnumerable<string> ids)
+    {
+        return await DataSource.GetPostsByIds(ids);
     }
 }

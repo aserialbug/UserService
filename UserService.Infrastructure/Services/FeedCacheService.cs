@@ -2,7 +2,6 @@
 using StackExchange.Redis;
 using UserService.Application.Interfaces;
 using UserService.Application.Models;
-using UserService.Domain.User;
 
 namespace UserService.Infrastructure.Services;
 
@@ -21,39 +20,61 @@ public class FeedCacheService : IFeedCacheService
         _maxUserFeedLength = Math.Max(options.Value.MaxUserFeedLength, MinFeedLength); 
     }
     
-    public async Task<IEnumerable<PostViewModel>> GetFeed(UserId userId, int count, string page)
+    public async Task<string[]> GetFeedDataAsync(string userId, int? offset, int? count)
     {
         var db = _redis.GetDatabase();
-        var feed = await db.ListRangeAsync(new RedisKey(userId.ToString()));
+        var start = offset ?? 0;
+        var stop = count ?? -1;
+        var feed = await db.ListRangeAsync(new RedisKey(userId), start, stop);
 
-        return feed
-            .Where(p => !p.IsNullOrEmpty)
-            .Select(p => _serializationService.Deserialize<PostViewModel>(p.ToString()) ?? throw new InvalidOperationException())
-            .ToArray();
+        return feed.Select(v => v.ToString()).ToArray();
     }
 
-    public async Task AddPost(IEnumerable<UserId> users, PostViewModel postViewModel)
+    public async Task AddPostAsync(string user, string postId)
     {
-        var value = new RedisValue(_serializationService.Serialize(postViewModel));
+        var userKey = new RedisKey(user);
+        var postKey = new RedisKey(postId);
+        var postValue = new RedisValue(postId);
+        var userValue = new RedisValue(user);
         var db = _redis.GetDatabase();
-        await Task.WhenAll(users
-            .Select(async u =>
-            {
-                var key = new RedisKey(u.ToString());
-                await db.ListRightPushAsync(key, value);
-                await db.ListTrimAsync(key, 0, _maxUserFeedLength - 1);
-            }));
-    }
 
-    public async Task CacheFeed(UserId userId, IEnumerable<PostViewModel> posts)
-    {
-        var db = _redis.GetDatabase();
-        var key = new RedisKey(userId.ToString());
-        await db.KeyDeleteAsync(key);
-        foreach (var postViewModel in posts)
+        var length = await db.ListRightPushAsync(userKey, postValue);
+        if (length > _maxUserFeedLength)
         {
-            await db.ListRightPushAsync(key, _serializationService.Serialize(postViewModel));
+            var toRemove =  await db.ListLeftPopAsync(userKey, length - _maxUserFeedLength);
+            foreach (var data in toRemove)
+            {
+                await db.SetRemoveAsync(new RedisKey(data.ToString()), userValue);
+            }
+            await db.ListTrimAsync(userKey, 0, _maxUserFeedLength - 1);
         }
+        
+        await db.SetAddAsync(postKey, user);
+    }
+
+    public async Task ClearFeedAsync(string userId)
+    {
+        var db = _redis.GetDatabase();
+        var key = new RedisKey(userId);
+        var feed = await db.ListRangeAsync(key);
+        foreach (var data in feed)
+        {
+            await db.SetRemoveAsync(new RedisKey(data.ToString()), userId);
+        }
+
+        await db.KeyDeleteAsync(key);
+    }
+
+    public async Task DeletePostAsync(string postId)
+    {
+        var db = _redis.GetDatabase();
+        var postKey = new RedisKey(postId);
+        var users = await db.SetMembersAsync(postKey);
+        foreach (var user in users)
+        {
+            await db.ListRemoveAsync(new RedisKey(user.ToString()), new RedisValue(postId));
+        }
+        await db.KeyDeleteAsync(postKey);
     }
 
     public class FeedCacheServiceSettings

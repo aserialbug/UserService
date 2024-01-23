@@ -7,6 +7,8 @@ namespace UserService.Application.Services;
 
 public class FeedService
 {
+    private const int MaxSingleRequestFeedCount = 50;
+    
     private readonly IDataQueryService _dataQueryService;
     private readonly IFeedCacheService _feedCacheService;
 
@@ -16,34 +18,58 @@ public class FeedService
         _feedCacheService = feedCacheService;
     }
 
-    public async Task<PagedResult<PostViewModel>> GetPagedFeed(UserId userId, int count, string? page)
+    public async Task<PagedResult<PostViewModel>> GetPagedFeedAsync(UserId userId, int? offset, int? count, CancellationToken token = default)
     {
-        count = Math.Max(1, count);
-        var feed = await _feedCacheService.GetFeed(userId, count + 1, page);
-        var feedArray = feed.ToArray();
-        
-        string? nextPage = null;
-        if (feedArray.Length > count)
+        var getCount = count ?? MaxSingleRequestFeedCount;
+        switch (getCount)
         {
-            nextPage = feedArray.Last().PostId;
-            feedArray = feedArray.Take(count).ToArray();
+            case 0:
+                return new PagedResult<PostViewModel>(Array.Empty<PostViewModel>());
+            case < 0:
+                throw new ArgumentOutOfRangeException(nameof(count), "count must be positive value");
+            case > MaxSingleRequestFeedCount:
+                throw new ArgumentOutOfRangeException(nameof(count), $"cannot request more than {MaxSingleRequestFeedCount} records at a time");
         }
 
-        return new PagedResult<PostViewModel>(feedArray, nextPage);
+        var getOffset = Math.Max(0, offset ?? 0);
+        
+        var data = await _feedCacheService.GetFeedDataAsync(userId.ToString(), getOffset, getCount + 1);
+        IEnumerable<PostViewModel> feed;
+        if (data.Length > count)
+        {
+            feed = await _dataQueryService.GetPostsByIds(data.Take(count.Value));
+            return new PagedResult<PostViewModel>(feed.ToArray(), offset + count);
+        }
+        else
+        {
+            feed = await _dataQueryService.GetPostsByIds(data);
+            return new PagedResult<PostViewModel>(feed.ToArray());
+        }
     }
 
-    public async Task RebuildFeed(UserId userId)
+    public async Task RebuildFeedAsync(UserId userId, CancellationToken token = default)
     {
-        var feed = await _dataQueryService.BuildFeed(userId);
-        await _feedCacheService.CacheFeed(userId, feed);
+        var userStr = userId.ToString();
+        var feed = await _dataQueryService.BuildFeed(userStr);
+        await _feedCacheService.ClearFeedAsync(userStr);
+        foreach (var viewModel in feed)
+        {
+            await _feedCacheService.AddPostAsync(userStr, viewModel.PostId);
+        }
     }
 
-    public async Task AddPostToFeeds(PostId postId, UserId authorId)
+    public async Task AddPostToFeedsAsync(PostId postId, UserId authorId, CancellationToken token = default)
     {
-        var friends = _dataQueryService.FindFriends(authorId);
-        var post = _dataQueryService.FindPost(postId);
-        await Task.WhenAll(friends, post);
+        var friends = await _dataQueryService.FindFriends(authorId.ToString());
+        foreach (var friendId in friends)
+        {
+            await _feedCacheService.AddPostAsync(friendId, postId.ToString());
+        }
+    }
 
-        await _feedCacheService.AddPost(friends.Result.Select(UserId.Parse).Append(authorId), post.Result);
+    public async Task DeletePost(PostId postId)
+    {
+        await _feedCacheService.DeletePostAsync(postId.ToString());
+        await Task.CompletedTask;
     }
 }

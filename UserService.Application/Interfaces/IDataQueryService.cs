@@ -10,8 +10,9 @@ public interface IDataQueryService
     Task<User?> FindUser(UserId userId);
     Task<PersonViewModel?> FindPerson(PersonId personId);
     Task<IEnumerable<PersonViewModel>> SearchPersons(string firstName, string lastName);
-    Task<IEnumerable<string>> FindFriends(UserId userId);
+    Task<IEnumerable<string>> FindFriends(string userId);
     Task<PostViewModel?> FindPost(PostId postId);
     Task<IEnumerable<PostViewModel>> GetPosts(UserId userId);
-    Task<IEnumerable<PostViewModel>> BuildFeed(UserId userId);
+    Task<IEnumerable<PostViewModel>> BuildFeed(string userId);
+    Task<IEnumerable<PostViewModel>> GetPostsByIds(IEnumerable<string> postIds);
 }

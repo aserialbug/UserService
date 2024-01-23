@@ -1,11 +1,11 @@
 ﻿using UserService.Application.Models;
-using UserService.Domain.User;
 
 namespace UserService.Application.Interfaces;
 
 public interface IFeedCacheService
 {
-    Task<IEnumerable<PostViewModel>> GetFeed(UserId userId, int count, string page);
-    Task AddPost(IEnumerable<UserId> users, PostViewModel postViewModel);
-    Task CacheFeed(UserId userId, IEnumerable<PostViewModel> posts);
+    Task<string[]> GetFeedDataAsync(string userId, int? offset, int? count);
+    Task AddPostAsync(string userId, string postId);
+    Task ClearFeedAsync(string userId);
+    Task DeletePostAsync(string postId);
 }

@@ -13,8 +13,8 @@ public class PostCreatedHandler : BaseDomainEventHandler<PostCreatedDomainEvent>
         _feedService = feedService;
     }
 
-    protected override async Task ProtectedHandle(PostCreatedDomainEvent notification, CancellationToken cancellationToken)
+    protected override async Task ProtectedHandle(PostCreatedDomainEvent notification, CancellationToken cancellationToken = default)
     {
-        await _feedService.AddPostToFeeds(notification.PostId, notification.AuthorId);
+        await _feedService.AddPostToFeedsAsync(notification.PostId, notification.AuthorId, cancellationToken);
     }
 }

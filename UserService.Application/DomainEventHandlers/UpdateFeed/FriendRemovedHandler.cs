@@ -13,10 +13,10 @@ public class FriendRemovedHandler : BaseDomainEventHandler<FriendshipDeletedDoma
         _feedService = feedService;
     }
 
-    protected override async Task ProtectedHandle(FriendshipDeletedDomainEvent notification, CancellationToken cancellationToken)
+    protected override async Task ProtectedHandle(FriendshipDeletedDomainEvent notification, CancellationToken cancellationToken = default)
     {
         await Task.WhenAll(
-            _feedService.RebuildFeed(notification.From),
-            _feedService.RebuildFeed(notification.To));
+            _feedService.RebuildFeedAsync(notification.From, cancellationToken),
+            _feedService.RebuildFeedAsync(notification.To, cancellationToken));
     }
 }

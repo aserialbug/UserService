@@ -1,6 +1,5 @@
 ﻿using Npgsql;
 using NpgsqlTypes;
-using UserService.Application.Exceptions;
 using UserService.Application.Models;
 using UserService.Domain.Posts;
 using UserService.Domain.User;
@@ -17,6 +16,9 @@ public static class NpgsqlDataSourcePostsExtensions
     
     private const string GetFeedCommandSql =
         "select id, author, created, content from posts where author = any(@users) order by created desc limit 1000";
+    
+    private const string GetPostsByIdsCommandSql =
+        "select id, author, created, content from posts where id = any(@ids) order by created desc limit 1000";
     
     
     public static async Task<PostViewModel?> FindPost(this NpgsqlDataSource dataSource, PostId postId)
@@ -60,6 +62,26 @@ public static class NpgsqlDataSourcePostsExtensions
         await using var getFeedCommand = dataSource.CreateCommand(GetFeedCommandSql);
         getFeedCommand.Parameters.AddWithValue("users", NpgsqlDbType.Array | NpgsqlDbType.Uuid, users.Select(s => UserId.Parse(s).ToGuid()).ToArray());
         await using var reader = await getFeedCommand.ExecuteReaderAsync();
+        var result = new List<PostViewModel>();
+
+        while (await reader.ReadAsync())
+        {
+            var id = PostId.FromGuid(reader.GetGuid(0));
+            var author = UserId.FromGuid(reader.GetGuid(1));
+            var created = reader.GetDateTime(2);
+            var content = reader.GetString(3);
+
+            result.Add(new PostViewModel(id.ToString(), author.ToString(), content, created));
+        }
+
+        return result;
+    }
+
+    public static async Task<IEnumerable<PostViewModel>> GetPostsByIds(this NpgsqlDataSource dataSource, IEnumerable<string> postIds)
+    {
+        await using var getByIdsCommand = dataSource.CreateCommand(GetPostsByIdsCommandSql);
+        getByIdsCommand.Parameters.AddWithValue("ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid, postIds.ToArray());
+        await using var reader = await getByIdsCommand.ExecuteReaderAsync();
         var result = new List<PostViewModel>();
 
         while (await reader.ReadAsync())

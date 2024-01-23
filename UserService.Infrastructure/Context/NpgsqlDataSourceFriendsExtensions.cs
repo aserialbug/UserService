@@ -13,9 +13,9 @@ public static class NpgsqlDataSourceFriendsExtensions
         @"smaller_first(friend_from, friend_to) && ARRAY[@userId]";
     
 
-    public static async Task<IEnumerable<string>> FindFriends(this NpgsqlDataSource dataSource, UserId userId)
+    public static async Task<IEnumerable<string>> FindFriends(this NpgsqlDataSource dataSource, string userId)
     {
-        var guidId = userId.ToGuid();
+        var guidId = Guid.Parse(userId);
         await using var findFriendsCommand = dataSource.CreateCommand(FindFriendsSql);
         findFriendsCommand.Parameters.AddWithValue("userId", NpgsqlDbType.Uuid, guidId);
         await using var reader = await findFriendsCommand.ExecuteReaderAsync();
